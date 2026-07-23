@@ -270,6 +270,15 @@ export const getLocaleUrlCTM = (
     }
   }
 
+  // Prepend Astro base path (e.g. /king/) for subdirectory deployments
+  let basePath = "/";
+  try {
+    basePath = (import.meta as any).env?.BASE_URL || "/";
+  } catch {}
+  if (basePath !== "/") {
+    updatedUrl = basePath.replace(/\/$/, "") + updatedUrl;
+  }
+
   return updatedUrl;
 };
 

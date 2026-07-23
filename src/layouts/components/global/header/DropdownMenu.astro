@@ -5,6 +5,8 @@ import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import { isActiveMenu, isActiveUrl } from "@/lib/utils/navigationActive";
 import { Image } from "astro:assets";
 
+const baseUrl = import.meta.env.BASE_URL || "/";
+
 import imgGlassWool from "@/assets/images/glass-wool-menu1.png";
 import imgRubberPlastic from "@/assets/images/rubber-plastic-menu1.png";
 import imgWorkingProcess from "@/assets/images/service/products-menu-right.png";
