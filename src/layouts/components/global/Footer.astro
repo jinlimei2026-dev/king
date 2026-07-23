@@ -6,6 +6,9 @@ import config from ".astro/config.generated.json";
 import { useTranslations, getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import { filteredEnabled } from "@/lib/utils/filteredEnabled";
 
+const basePrefix = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const withBase = (url: string) => basePrefix + url;
+
 const t = await useTranslations(Astro.currentLocale as string);
 let { copyright, footerDescription } = config.settings;
 
@@ -31,7 +34,7 @@ const copyrightText = copyright.text;
           {
             filteredEnabled(social.main).map((item: any) => (
               <a
-                href={getLocaleUrlCTM(item.url as string, Astro.currentLocale)}
+                href={withBase(getLocaleUrlCTM(item.url as string, Astro.currentLocale))}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={item.label}

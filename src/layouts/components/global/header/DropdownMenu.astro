@@ -6,6 +6,7 @@ import { isActiveMenu, isActiveUrl } from "@/lib/utils/navigationActive";
 import { Image } from "astro:assets";
 
 const baseUrl = import.meta.env.BASE_URL || "/";
+const basePrefix = baseUrl === "/" ? "" : baseUrl.replace(/\/$/, "");
 
 import imgGlassWool from "@/assets/images/glass-wool-menu1.png";
 import imgRubberPlastic from "@/assets/images/rubber-plastic-menu1.png";
@@ -139,7 +140,7 @@ const currentIcons = categoryIcons[menu.name] || ["M12 9v3m0 0v3m0-3h3m-3 0H9"];
                 class={`grid flex-1 gap-8 p-10 md:p-14 ${enabledChildren.length <= 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
                 {enabledChildren.map((child: any, index: number) => (
                   <a
-                    href={getLocaleUrlCTM(child.url, Astro.currentLocale)}
+                    href={basePrefix + getLocaleUrlCTM(child.url, Astro.currentLocale)}
                     aria-label={child.name}
                     role="menuitem"
                     class="group/child -m-4 flex h-full flex-col rounded-2xl p-4 text-gray-900 transition-all duration-300 hover:bg-gray-50 hover:text-blue-600 dark:text-white dark:hover:bg-gray-800/40">
@@ -201,7 +202,7 @@ const currentIcons = categoryIcons[menu.name] || ["M12 9v3m0 0v3m0-3h3m-3 0H9"];
                   </p>
                 </div>
                 <a
-                  href={getLocaleUrlCTM(currentCard.btnUrl, Astro.currentLocale)}
+                  href={basePrefix + getLocaleUrlCTM(currentCard.btnUrl, Astro.currentLocale)}
                   aria-label={currentCard.btnText}
                   role="menuitem"
                   class="mt-10 flex w-full items-center justify-between gap-2 rounded-xl bg-white px-6 py-4 text-sm font-bold text-gray-900 transition-all hover:scale-[1.02] hover:bg-gray-100">
@@ -226,7 +227,7 @@ const currentIcons = categoryIcons[menu.name] || ["M12 9v3m0 0v3m0-3h3m-3 0H9"];
             <a
               role="menuitem"
               aria-label={child.name}
-              href={getLocaleUrlCTM(
+              href={basePrefix + getLocaleUrlCTM(
                 child.url || Astro.url.origin,
                 Astro.currentLocale,
               )}
