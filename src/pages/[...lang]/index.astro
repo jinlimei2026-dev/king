@@ -1,0 +1,51 @@
+---
+import Base from "@/layouts/Base.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import HomeBannerTwo from "@/components/sections/HomeBannerTwo.astro";
+import FeaturesGridTwo from "@/components/sections/FeaturesGridTwo.astro";
+import WorkingProcessSection from "@/components/sections/WorkingProcessSection.astro";
+import AboutCompanySectionTwo from "@/components/sections/AboutCompanySectionTwo.astro";
+import Testimonials from "@/components/sections/Testimonials.astro";
+import ProductShowcase from "@/components/sections/ProductShowcase.astro";
+import ClientCarousel from "@/components/sections/ClientCarousel.astro";
+import FeaturedProjects from "@/components/sections/FeaturedProjects.astro";
+import WhyUs from "@/components/sections/WhyUs.astro";
+import Advantages from "@/components/sections/Advantages.astro";
+import RecentBlog from "@/components/sections/RecentBlog.astro";
+import Faq from "@/components/sections/Faq.astro";
+import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const homepage = await getEntryCTM("homepage", "-index", Astro.currentLocale);
+const heroSection = await getEntryCTM(
+  "sections",
+  "home-banner-two",
+  Astro.currentLocale,
+);
+
+let imageToPreload = heroSection?.data?.image ? heroSection.data.image : [];
+imageToPreload = imageToPreload
+  ? imageToPreload.startsWith("http")
+    ? imageToPreload
+    : await bgOptimizedImage(imageToPreload)
+  : "";
+---
+
+<Base {...homepage.data} homepage={true} preloadImages={[imageToPreload]}>
+  <HomeBannerTwo />
+  <FeaturesGridTwo />
+  <ProductShowcase />
+  <ClientCarousel />
+  <AboutCompanySectionTwo hasSectionSpacing={false} />
+  <Testimonials />
+  <FeaturedProjects />
+  <WhyUs />
+  <Advantages />
+  <WorkingProcessSection />
+  <RecentBlog />
+  <Faq />
+</Base>

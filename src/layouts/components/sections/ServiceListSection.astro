@@ -1,0 +1,65 @@
+---
+import { sortByDate } from "@/lib/utils/sortFunctions";
+import Pagination from "../widgets/Pagination.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import type { ourServicesSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import ServiceCard from "../cards/ServiceCard.astro";
+
+const { servicesFolder } = config.settings;
+
+type SectionType = z.infer<typeof ourServicesSectionSchema>;
+type Props = {
+  listPage?: boolean;
+  content?: SectionType;
+  pagination?: {
+    enable: boolean;
+    currentPage: number;
+    limit?: number;
+  };
+};
+
+let { listPage = false } = Astro.props as Props;
+
+let list = await getCollectionCTM(
+  servicesFolder as "products",
+  Astro.currentLocale,
+);
+
+list = sortByDate(list);
+let totalPages = Math.ceil(list?.length / config.settings.pagination);
+const pagination = Astro.props.pagination;
+if (pagination) {
+  const indexOfLastPost = pagination?.currentPage * config.settings.pagination;
+  const indexOfFirstPost = indexOfLastPost - config.settings.pagination;
+  list = list.slice(indexOfFirstPost, indexOfLastPost);
+}
+
+if (pagination?.limit && !pagination) {
+  list = list.slice(0, Astro.props.pagination?.limit || 6);
+}
+---
+
+<section>
+  <div class="container space-y-10 md:space-y-16">
+    {
+      list && list.length > 0 && (
+        <div class="divide-border-dark/15 group/list border-border-dark/15 divide-y border-y">
+          {list.map((item, index) => {
+            return <ServiceCard content={item} index={index} />;
+          })}
+        </div>
+      )
+    }
+    {
+      listPage && (
+        <Pagination
+          collection={servicesFolder}
+          currentPage={pagination?.currentPage || 1}
+          totalPages={totalPages}
+        />
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,46 @@
+---
+import "aos/dist/aos.css";
+import "@/styles/global.css";
+import Head from "@/components/global/Head.astro";
+import Footer from "@/components/global/Footer.astro";
+import Header from "@/components/global/header/Header.astro";
+import type { JSONLDProps } from "@/lib/utils/JsonLdGenerator";
+import GlobalScripts from "./components/widgets/GlobalScripts.astro";
+import config from ".astro/config.generated.json";
+
+type Props = JSONLDProps & {
+  className?: string;
+  fitToScreen?: boolean;
+  draft?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  robots?: string;
+  excludeFromSitemap?: boolean;
+  customSlug?: string;
+  canonical?: string;
+  status?: number;
+  keywords?: string[];
+  disableTagline?: boolean;
+  structuredData?: Props;
+  preloadImages?: string[];
+};
+
+let { structuredData } = Astro.props;
+---
+
+<!doctype html>
+<html
+  lang={Astro.currentLocale ||
+    config.settings.multilingual.defaultLanguage ||
+    "en"}>
+  <Head {...Astro.props} structuredData={structuredData} />
+  <body>
+    <Header />
+    <main class:list={["has-section-gap", Astro.props.class]}>
+      <slot />
+    </main>
+    <Footer />
+
+    <GlobalScripts />
+  </body>
+</html>

@@ -1,0 +1,51 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "shipping-cta",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, description, primaryButton, secondaryButton } = sectionData.data;
+---
+
+<section class="w-full bg-white pb-24 md:pb-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div
+      class="relative flex w-full flex-col items-center justify-between gap-12 overflow-hidden rounded-[2.5rem] bg-[#0a1128] p-10 shadow-2xl md:p-16 lg:flex-row lg:p-20"
+      data-aos="fade-up">
+      <div
+        class="absolute top-0 right-0 z-0 h-full w-full bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-[#2563eb]/40 via-transparent to-transparent opacity-80 lg:w-1/2">
+      </div>
+
+      <div class="relative z-10 w-full text-center lg:w-2/3 lg:text-left">
+        <h2
+          class="mb-6 text-3xl leading-[1.15] font-bold text-white md:text-5xl">
+          {title}
+        </h2>
+        <p
+          class="mx-auto max-w-2xl text-lg leading-relaxed text-gray-300 lg:mx-0">
+          {description}
+        </p>
+      </div>
+
+      <div
+        class="relative z-10 flex w-full flex-col items-center justify-center gap-5 sm:flex-row lg:w-auto">
+        <a
+          href={primaryButton.url}
+          class="w-full rounded-full bg-[#2563eb] px-10 py-4 text-center font-bold whitespace-nowrap text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:bg-[#1d4ed8] sm:w-auto">
+          {primaryButton.label}
+        </a>
+
+        <a
+          href={secondaryButton.url}
+          class="w-full rounded-full border border-white/20 bg-white/5 px-10 py-4 text-center font-bold whitespace-nowrap text-white transition-all duration-300 hover:bg-white/15 sm:w-auto">
+          {secondaryButton.label}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

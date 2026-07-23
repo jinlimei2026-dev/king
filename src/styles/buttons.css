@@ -1,0 +1,174 @@
+.btn-wrapper {
+  @apply relative inline-block;
+}
+
+@utility btn {
+  @apply relative inline-block overflow-hidden rounded-md px-8 py-3.5 leading-tight font-normal whitespace-nowrap duration-300 disabled:cursor-not-allowed;
+}
+@utility btn-sm {
+  @apply px-10 py-3;
+}
+@utility btn-md {
+  @apply px-10 py-4 md:text-lg xl:px-12;
+}
+
+@utility btn-primary {
+  @apply bg-primary hover:bg-theme-dark gap-3 rounded-sm px-4! py-3.5 text-white xl:px-5!;
+}
+@utility btn-black {
+  @apply text-light bg-black;
+}
+@utility btn-white {
+  @apply bg-theme-light text-text-default;
+}
+
+@utility btn-text {
+  @apply text-text-default hover:text-text-default border-b-border-light inline-block rounded-none p-0 hover:border-b-black/50;
+}
+
+@utility btn-outline {
+  @apply text-text-default shadow-button border;
+}
+@utility btn-outline-white {
+  @apply text-text-default border bg-white;
+}
+.btn-outline .gradient-shape {
+  @apply text-text-default opacity-30;
+}
+
+.has-icon {
+  @apply inline-flex items-center gap-3;
+}
+
+.magnetic-hover-anim:not([disabled="true"]) {
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+.creative-hover-anim:not([disabled="true"]) {
+  @apply relative z-10 overflow-hidden delay-100;
+
+  .hover-bg {
+    @apply translate-centered absolute top-(--creative-hover-top) left-(--creative-hover-left) -z-10 block h-0 w-0 rounded-md;
+    transition:
+      width 0.7s ease,
+      height 0.7s ease;
+  }
+
+  &:hover .hover-bg {
+    width: 56.25rem;
+    height: 56.25rem;
+  }
+
+  &.btn-primary .hover-bg {
+    @apply bg-theme-dark;
+  }
+  &.btn-outline .hover-bg {
+    background: var(--color-primary);
+  }
+  &.btn-white .hover-bg {
+    @apply bg-black/10;
+  }
+  &:hover {
+    &.btn-outline {
+      color: var(--color-white) !important;
+    }
+  }
+}
+.text-flip-hover-anim:not([disabled="true"]) {
+  .text-flip-inner {
+    @apply relative block overflow-hidden text-transparent normal-case;
+
+    &::before,
+    &::after {
+      content: attr(data-content);
+      @apply pointer-events-none absolute inset-0 text-center transition-all duration-300 ease-in-out;
+    }
+
+    &::before {
+      @apply top-0 opacity-100;
+    }
+
+    &::after {
+      @apply top-full opacity-0;
+    }
+  }
+
+  &.btn-outline,
+  &.btn-outline-white,
+  &.btn-text {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-text-default;
+      }
+    }
+  }
+
+  &.btn-primary,
+  &.btn-black {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-light;
+      }
+    }
+  }
+
+  &.btn-white {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-text-default;
+      }
+    }
+  }
+}
+
+.btn-wrapper:hover .text-flip-inner {
+  &::before {
+    @apply -top-full opacity-0;
+  }
+
+  &::after {
+    @apply top-0 opacity-100;
+  }
+}
+.has-icon-moving-animation {
+  &:hover .icon,
+  .btn-wrapper:hover & .icon {
+    &.icon-before {
+      top: -100%;
+      bottom: 100%;
+    }
+
+    &.icon-after {
+      top: 0;
+      bottom: 0;
+    }
+  }
+
+  .icons-wrapper {
+    @apply relative overflow-hidden;
+  }
+
+  .icon {
+    transition:
+      top 0.2s ease-in,
+      bottom 0.2s ease-in;
+
+    &.icon-before,
+    &.icon-after {
+      @apply absolute inset-0 size-full;
+    }
+
+    &.icon-before {
+      top: 0;
+      bottom: 0;
+    }
+
+    &.icon-after {
+      top: 100%;
+      bottom: -100%;
+    }
+  }
+}

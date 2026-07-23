@@ -1,0 +1,108 @@
+---
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import ButtonContent from "./ButtonContent.astro";
+import type { sharedButton, sharedButtonTag } from "@/sections.schema";
+import type { z } from "astro/zod";
+
+type Props = z.infer<typeof sharedButton | typeof sharedButtonTag>;
+
+const {
+  enable = true,
+  tag = "a",
+  title,
+  label,
+  url = "#",
+  rel,
+  target,
+  icon,
+  hoverEffect = "text-flip",
+  variant = "fill",
+  class: className,
+  ...rest
+} = Astro.props;
+
+if (!enable) return;
+
+const isCreativeHoverEffect = hoverEffect === "creative-fill";
+const isTextFlipHoverEffect = hoverEffect === "text-flip";
+const isMagneticHoverEffect = hoverEffect === "magnetic";
+const isMagneticTextFlipHoverEffect = hoverEffect === "magnetic-text-flip";
+
+const resolvedRel = url.startsWith("http")
+  ? rel || "noopener noreferrer"
+  : rel || undefined;
+const resolvedTarget = url.startsWith("http")
+  ? target || "_blank"
+  : target || undefined;
+
+const buttonClasses = [
+  "btn",
+  {
+    "creative-hover-anim": isCreativeHoverEffect,
+    "btn-outline": variant === "outline",
+    "btn-primary": variant === "fill",
+    "btn-white": variant === "white",
+    "btn-text has-icon-moving-animation no-underline border-none":
+      variant === "text",
+    "has-icon has-icon-moving-animation":
+      icon?.enable && icon?.name && variant !== "text",
+  },
+
+  (isTextFlipHoverEffect || isMagneticTextFlipHoverEffect) &&
+    "text-flip-hover-anim",
+  (isMagneticHoverEffect || isMagneticTextFlipHoverEffect) &&
+    "magnetic-hover-anim",
+  className,
+];
+---
+
+{
+  tag === "a" ? (
+    <a
+      rel={resolvedRel}
+      target={resolvedTarget}
+      href={getLocaleUrlCTM(url, Astro.currentLocale)}
+      class:list={["btn-wrapper", buttonClasses]}
+      aria-label={
+        Astro.props["aria-label"] ||
+        label ||
+        title ||
+        (icon?.name ? icon.name : "Link")
+      }
+      {...rest}>
+      <ButtonContent
+        {...{
+          label,
+          title,
+          icon,
+          variant,
+          isCreativeHoverEffect,
+          isTextFlipHoverEffect,
+          isMagneticTextFlipHoverEffect,
+        }}
+      />
+    </a>
+  ) : (
+    <button
+      class:list={["btn-wrapper", buttonClasses]}
+      aria-label={
+        Astro.props["aria-label"] ||
+        label ||
+        title ||
+        (icon?.name ? icon.name : "Button")
+      }
+      {...rest}>
+      <ButtonContent
+        {...{
+          label,
+          title,
+          icon,
+          variant,
+          isCreativeHoverEffect,
+          isTextFlipHoverEffect,
+          isMagneticTextFlipHoverEffect,
+        }}
+      />
+    </button>
+  )
+}

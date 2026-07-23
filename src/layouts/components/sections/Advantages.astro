@@ -1,0 +1,73 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import Button from "@/components/Button.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+
+const entry = await getEntryCTM("sections", "advantages", Astro.currentLocale);
+const content = entry?.data;
+
+if (!content || !content.enable) return;
+
+const { title, features, button, certifications } = content;
+---
+
+<section class="bg-white py-20 md:py-32">
+  <div class="container">
+    <div class="mb-16 w-full md:mb-28" data-aos="fade-up">
+      <h2
+        class="text-dark text-3xl leading-[1.2] font-bold tracking-tight md:text-5xl lg:text-[52px]">
+        {title}
+      </h2>
+    </div>
+
+    {
+      certifications && (
+        <div
+          class="border-dark/10 mb-16 grid grid-cols-2 items-center justify-items-center gap-4 border-y py-10 md:mb-24 md:grid-cols-4 lg:gap-6"
+          data-aos="fade-up"
+          data-aos-delay="100">
+          {certifications.map((cert: any) => (
+            <div class="border-dark/10 relative flex aspect-3/4 w-full items-center justify-center overflow-hidden rounded-xl border bg-white p-3">
+              <OptimizedImage
+                src={cert.image}
+                alt={cert.alt}
+                width={300}
+                height={400}
+                class="h-full w-full object-contain"
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    <div
+      class="grid grid-cols-1 gap-x-12 gap-y-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-16 lg:gap-y-16">
+      {
+        features &&
+          features.map((feature: any, index: number) => (
+            <div
+              class="border-dark/20 flex h-full flex-col border-b pb-8"
+              data-aos="fade-up"
+              data-aos-delay={index * 50}>
+              <h3 class="text-dark mb-4 text-xl font-bold tracking-tight md:text-2xl">
+                &bull; {feature.title}
+              </h3>
+
+              <p class="text-dark/60 text-sm leading-relaxed md:text-base">
+                {feature.description}
+              </p>
+            </div>
+          ))
+      }
+    </div>
+
+    {
+      button && button.enable && (
+        <div class="mt-16 text-center md:mt-24" data-aos="fade-up">
+          <Button {...button} class="inline-flex px-8 py-3.5" />
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,182 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "@/components/Button.astro";
+
+const {
+  title,
+  description,
+  image,
+  button1 = {
+    enable: true,
+    label: "Get a Quote",
+    url: "/#services",
+    icon: { enable: true, name: "ArrowUpRight", position: "left" },
+    variant: "fill",
+  },
+  button2 = {
+    enable: true,
+    label: "Custom Service",
+    url: "/#services",
+    icon: { enable: true, name: "ArrowUpRight", position: "left" },
+    variant: "fill",
+  },
+} = Astro.props;
+---
+
+<section
+  class="relative flex min-h-[85vh] w-full items-center justify-start overflow-hidden xl:min-h-[95vh]">
+  <div class="absolute inset-0 -z-20">
+    {
+      image && (
+        <OptimizedImage
+          src={image}
+          alt={title}
+          width={1920}
+          height={1080}
+          class="h-full w-full scale-105 animate-[kenburns_20s_ease-in-out_infinite_alternate] object-cover object-center"
+        />
+      )
+    }
+  </div>
+
+  <div
+    class="from-theme-dark/95 via-theme-dark/60 absolute inset-0 -z-10 bg-linear-to-r to-transparent">
+  </div>
+  <div
+    class="from-theme-dark/40 absolute inset-0 -z-10 bg-linear-to-t via-transparent to-transparent">
+  </div>
+
+  <div class="relative z-10 container w-full pt-24 pb-16 lg:pb-24">
+    <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+      <div
+        class="hero-fade-up flex flex-col items-start gap-6 lg:col-span-8 lg:gap-8">
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md">
+          <span class="bg-primary flex h-2 w-2 animate-pulse rounded-full">
+          </span>
+          <span
+            class="text-sm font-medium tracking-wide text-white uppercase italic">
+            Architectural Solution
+          </span>
+        </div>
+
+        <h1
+          class="max-w-4xl text-5xl leading-[1.1] font-bold tracking-tight text-white md:text-7xl lg:text-[86px]">
+          {title}
+        </h1>
+
+        <p
+          class="max-w-xl text-lg leading-relaxed font-light text-white/80 md:text-xl">
+          {description}
+        </p>
+
+        <div class="mt-4 flex flex-wrap items-center gap-4">
+          {
+            button1 && button1.enable && (
+              <Button
+                {...button1}
+                class="shadow-primary/30 inline-flex px-8 py-3.5 shadow-lg transition-transform hover:-translate-y-1"
+              />
+            )
+          }
+          {
+            button2 && button2.enable && (
+              <Button
+                {...button2}
+                class="inline-flex px-8 py-3.5 shadow-lg shadow-white/10 transition-transform hover:-translate-y-1"
+              />
+            )
+          }
+        </div>
+      </div>
+
+      <div class="hero-fade-up hero-delay-400 mt-10 lg:col-span-12 lg:mt-12">
+        <div class="flex flex-wrap items-stretch gap-4 md:gap-6">
+          <div
+            class="group flex min-w-60 flex-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-xl transition-all hover:-translate-y-2 hover:bg-white/20">
+            <div
+              class="flex size-14 shrink-0 items-center justify-center rounded-full bg-orange-500/20 text-orange-400">
+              <i class="fa-solid fa-fire-shield text-2xl"></i>
+            </div>
+            <div>
+              <p
+                class="text-base font-bold text-white transition-colors group-hover:text-orange-400">
+                Class A1 Fireproof
+              </p>
+              <p
+                class="text-xs font-medium tracking-widest text-white/60 uppercase">
+                Safety Standard
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="group flex min-w-60 flex-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-xl transition-all hover:-translate-y-2 hover:bg-white/20">
+            <div
+              class="flex size-14 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-blue-400">
+              <i class="fa-solid fa-temperature-arrow-down text-2xl"></i>
+            </div>
+            <div>
+              <p
+                class="text-base font-bold text-white transition-colors group-hover:text-blue-400">
+                ≤0.034 W/m.K
+              </p>
+              <p
+                class="text-xs font-medium tracking-widest text-white/60 uppercase">
+                Thermal Performance
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="group flex min-w-60 flex-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-xl transition-all hover:-translate-y-2 hover:bg-white/20">
+            <div
+              class="flex size-14 shrink-0 items-center justify-center rounded-full bg-green-500/20 text-green-400">
+              <i class="fa-solid fa-box-archive text-2xl"></i>
+            </div>
+            <div>
+              <p
+                class="text-base font-bold text-white transition-colors group-hover:text-green-400">
+                Vacuum Packed
+              </p>
+              <p
+                class="text-xs font-medium tracking-widest text-white/60 uppercase">
+                50% Freight Saving
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes kenburns {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+
+  .hero-fade-up {
+    animation: customFadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes customFadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

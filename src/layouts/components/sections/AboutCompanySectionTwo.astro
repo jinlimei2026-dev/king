@@ -1,0 +1,233 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import type { aboutCompanySectionSchema } from "@/sections.schema";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "@/components/Button.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+
+type StatisticItem = {
+  value: string;
+  label: string;
+};
+
+type SectionType = Section &
+  NonNullable<z.infer<typeof aboutCompanySectionSchema>> & {
+    statistics?: StatisticItem[];
+  };
+
+type Props = { content?: SectionType; hasSectionSpacing?: boolean };
+
+let defaultContent = (
+  await getEntryCTM("sections", "about-company-two", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  image,
+  imageAlt,
+  imageSecondary,
+  imageSecondaryAlt,
+  description,
+  button,
+  statistics,
+} = actualContent;
+
+if (!enable) return;
+---
+
+<section
+  id="about"
+  class="relative scroll-mt-28 overflow-hidden py-16 md:py-24 lg:py-32">
+  <div class="relative container w-full">
+    <div class="mb-12 lg:mb-20" data-aos="fade-up" data-aos-duration="600">
+      <div class="flex flex-col gap-4">
+        {badge && <SectionBadge title={badge} />}
+        {
+          title && (
+            <h2 class="text-dark text-3xl leading-tight font-bold tracking-tight md:text-5xl lg:text-[54px]">
+              {title}
+            </h2>
+          )
+        }
+      </div>
+    </div>
+
+    <div
+      class="relative grid grid-cols-1 items-stretch gap-10 lg:grid-cols-12 lg:gap-16">
+      {
+        image && (
+          <div
+            class="relative h-full lg:col-span-6"
+            data-aos="fade-right"
+            data-aos-duration="800">
+            <div class="bg-dark/5 h-full min-h-125 w-full overflow-hidden rounded-2xl shadow-xl">
+              <OptimizedImage
+                src={image}
+                alt={imageAlt || "Company Overview"}
+                width={600}
+                height={800}
+                class="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            </div>
+          </div>
+        )
+      }
+
+      <div
+        class="flex flex-col lg:col-span-6 lg:pr-16 xl:pr-32"
+        data-aos="fade-left"
+        data-aos-delay="200"
+        data-aos-duration="800">
+        {
+          description && (
+            <div class="border-border-dark/20 mb-10 border-y py-8">
+              <p
+                class="text-text-default/80 text-base leading-relaxed md:text-lg"
+                set:html={markdownify(description)}
+              />
+              {button && (
+                <div class="mt-8">
+                  <Button {...button} class="px-8 py-3.5" />
+                </div>
+              )}
+            </div>
+          )
+        }
+
+        {
+          imageSecondary && (
+            <div class="group bg-dark/5 relative mt-auto aspect-video w-full overflow-hidden rounded-2xl shadow-lg md:aspect-video">
+              <div class="bg-dark/60 group-hover:bg-dark/40 absolute inset-0 z-10 mix-blend-multiply transition-all duration-500" />
+
+              <OptimizedImage
+                src={imageSecondary}
+                alt={imageSecondaryAlt || "Factory facility view"}
+                width={600}
+                height={450}
+                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+
+              <div class="absolute inset-0 z-20 flex items-center justify-center gap-5 md:gap-10">
+                <div class="flex cursor-default flex-col items-center gap-2 transition-transform hover:-translate-y-1">
+                  <div class="flex size-12 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white shadow-lg backdrop-blur-md md:size-14">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <>
+                        <circle cx="12" cy="8" r="6" />
+                        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+                      </>
+                    </svg>
+                  </div>
+                  <span class="text-xs font-bold tracking-wider text-white drop-shadow-md md:text-sm">
+                    ISO 9001
+                  </span>
+                </div>
+
+                <div class="flex cursor-default flex-col items-center gap-2 transition-transform hover:-translate-y-1">
+                  <div class="flex size-12 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white shadow-lg backdrop-blur-md md:size-14">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <>
+                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                        <path d="m9 14 2 2 4-4" />
+                      </>
+                    </svg>
+                  </div>
+                  <span class="text-xs font-bold tracking-wider text-white drop-shadow-md md:text-sm">
+                    SGS AUDITED
+                  </span>
+                </div>
+
+                <div class="flex cursor-default flex-col items-center gap-2 transition-transform hover:-translate-y-1">
+                  <div class="flex size-12 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white shadow-lg backdrop-blur-md md:size-14">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <>
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </>
+                    </svg>
+                  </div>
+                  <span class="text-xs font-bold tracking-wider text-white drop-shadow-md md:text-sm">
+                    OEM / ODM
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      <div
+        class="pointer-events-none absolute top-1/2 -right-16 hidden -translate-y-1/2 select-none xl:block">
+        <div
+          class="rotate-180 text-[120px] leading-none font-black tracking-widest whitespace-nowrap text-black uppercase [writing-mode:vertical-rl] 2xl:text-[140px]">
+          Since, 1985
+        </div>
+      </div>
+    </div>
+
+    {
+      statistics && statistics.length > 0 && (
+        <div
+          class="mt-20 flex w-full justify-center lg:mt-32"
+          data-aos="fade-up"
+          data-aos-duration="1000">
+          <div class="flex w-full flex-wrap items-center justify-center md:flex-nowrap">
+            {statistics.map((stat: any, index: number) => (
+              <div
+                class={`relative flex aspect-square w-40 shrink-0 cursor-default flex-col items-center justify-center rounded-full transition-transform duration-500 hover:-translate-y-2 sm:w-48 md:w-[28%] ${index !== 0 ? "-ml-4 sm:-ml-8 md:-ml-[4%]" : ""} ${
+                  index % 2 === 0
+                    ? "z-20 border-none bg-[#F4F4F1] shadow-sm"
+                    : "border-border-dark/15 z-10 border bg-white"
+                }`}>
+                <p class="text-dark mb-1 text-4xl font-bold tracking-tight sm:text-5xl md:text-5xl lg:mb-2 lg:text-6xl xl:text-7xl">
+                  {stat.value}
+                </p>
+                <p class="max-w-[65%] text-center text-[11px] leading-tight font-medium text-gray-600 sm:text-xs md:text-sm lg:text-base xl:text-lg">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</section>

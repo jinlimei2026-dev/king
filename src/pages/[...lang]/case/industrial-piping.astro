@@ -1,0 +1,64 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+import config from ".astro/config.generated.json";
+import CaseHero from "@/layouts/components/sections/CaseHero.astro";
+import CaseCards from "@/layouts/components/sections/CaseCards.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang: any) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const heroData: any = await getEntryCTM(
+        "sections" as any,
+        "case-industrial-hero",
+        lang.languageCode,
+      );
+
+      const listData: any = await getEntryCTM(
+        "sections" as any,
+        "case-industrial",
+        lang.languageCode,
+      );
+
+      return {
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+        },
+        props: { heroData, listData },
+      };
+    }),
+  );
+  return paths.flat();
+}
+
+const { heroData, listData } = Astro.props;
+
+const seoData = {
+  enable: true,
+  title: "Industrial Piping | Applications",
+  description: "Advanced insulation projects for Industrial Piping systems.",
+};
+---
+
+<Base {...seoData}>
+  <CaseHero
+    subtitle={heroData?.data?.subtitle}
+    title={heroData?.data?.title}
+    description={heroData?.data?.description}
+    bgImage={heroData?.data?.bgImage}
+    button={heroData?.data?.button}
+  />
+
+  <CaseCards
+    title={listData?.data?.title}
+    description={listData?.data?.description}
+    cases={listData?.data?.cases}
+  />
+</Base>

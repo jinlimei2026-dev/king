@@ -1,0 +1,168 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+
+const entry = await getEntryCTM(
+  "sections",
+  "featured-projects",
+  Astro.currentLocale,
+);
+const content = entry?.data;
+
+if (!content || !content.enable) return;
+
+const { badge, title, projects, clientImages } = content;
+---
+
+<section class="overflow-hidden bg-white py-16 md:py-20">
+  <div class="container">
+    <div
+      class="mx-auto mb-10 max-w-4xl text-center lg:mb-24"
+      data-aos="fade-up">
+      {badge && <SectionBadge title={badge} />}
+      <h2
+        class="text-dark mt-4 text-3xl leading-tight font-bold tracking-tight md:text-4xl lg:text-5xl">
+        {title}
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="border-dark/10 flex flex-col border-t lg:col-span-7">
+        {
+          projects &&
+            projects.map((project: any, index: number) => (
+              <a
+                href={project.link}
+                class="project-item group border-dark/10 relative flex flex-col border-b py-6 transition-all duration-500 lg:py-8"
+                data-index={index}>
+                <div class="bg-dark/5 mb-4 block aspect-video w-full overflow-hidden rounded-xl shadow-sm lg:hidden">
+                  <OptimizedImage
+                    src={project.image}
+                    alt={project.title}
+                    width={600}
+                    height={338}
+                    class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+
+                <div class="flex w-full items-center justify-between">
+                  <div class="flex items-center gap-4 transition-transform duration-500 md:gap-6 lg:group-hover:translate-x-6">
+                    <span class="text-dark/40 hidden -translate-x-2 text-sm font-bold whitespace-nowrap opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100 lg:block">
+                      {project.id}
+                    </span>
+
+                    <div class="flex flex-col gap-1 lg:flex-row lg:items-baseline lg:gap-4">
+                      <h3 class="text-dark lg:group-hover:text-primary text-lg leading-tight font-bold tracking-tight transition-colors md:text-xl">
+                        {project.title}
+                      </h3>
+
+                      <span class="text-dark/80 text-[11px] font-normal tracking-widest whitespace-nowrap uppercase md:text-xs">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-dark/30 lg:group-hover:text-primary shrink-0 pl-4 transition-transform duration-500 lg:group-hover:scale-125 lg:group-hover:rotate-45">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            ))
+        }
+      </div>
+
+      <div class="hidden lg:col-span-5 lg:block" data-aos="fade-left">
+        <div
+          class="bg-dark/5 relative h-full w-full overflow-hidden rounded-2xl shadow-2xl">
+          {
+            projects &&
+              projects.map((project: any, index: number) => (
+                <div
+                  class={`project-image absolute inset-0 transform transition-all duration-700 ease-in-out ${index === 0 ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
+                  data-img-index={index}>
+                  <OptimizedImage
+                    src={project.image}
+                    alt={project.title}
+                    width={600}
+                    height={450}
+                    class="h-full w-full object-cover"
+                  />
+                  <div class="from-dark/20 absolute inset-0 bg-linear-to-t to-transparent" />
+                </div>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="border-dark/10 mt-20 border-t pt-16 lg:mt-32"
+      data-aos="fade-up">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:gap-6">
+        {
+          clientImages &&
+            clientImages.map((imgPath: string, index: number) => (
+              <div class="group bg-dark/5 relative aspect-4/3 w-full overflow-hidden rounded-xl shadow-sm">
+                <OptimizedImage
+                  src={imgPath}
+                  alt={`Client Group ${index + 1}`}
+                  width={600}
+                  height={450}
+                  class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div class="bg-dark/0 group-hover:bg-dark/10 pointer-events-none absolute inset-0 transition-colors duration-500" />
+              </div>
+            ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  function initProjectShowcase() {
+    if (window.innerWidth < 1024) return;
+
+    const items = document.querySelectorAll(".project-item");
+    const images = document.querySelectorAll(".project-image");
+
+    items.forEach((item) => {
+      item.addEventListener("mouseenter", () => {
+        const index = item.getAttribute("data-index");
+
+        images.forEach((img) => {
+          const imgIndex = img.getAttribute("data-img-index");
+          if (imgIndex === index) {
+            img.classList.remove("opacity-0", "scale-105");
+            img.classList.add("opacity-100", "scale-100");
+          } else {
+            img.classList.remove("opacity-100", "scale-100");
+            img.classList.add("opacity-0", "scale-105");
+          }
+        });
+      });
+    });
+  }
+
+  initProjectShowcase();
+  window.addEventListener("resize", initProjectShowcase);
+  document.addEventListener("astro:after-swap", initProjectShowcase);
+</script>

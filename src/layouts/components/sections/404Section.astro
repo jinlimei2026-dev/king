@@ -1,0 +1,58 @@
+---
+import type { z } from "astro/zod";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "../Button.astro";
+import type { Section } from "@/types";
+import type { fourZeroFourSectionSchema } from "@/sections.schema";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import SectionTitle from "../global/SectionTitle.astro";
+
+type SectionType = Section &
+  NonNullable<z.infer<typeof fourZeroFourSectionSchema>>;
+type Props = { content?: SectionType };
+
+let defaultContent = (
+  await getEntryCTM("sections", "404-section", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { title, description, button, image } = actualContent;
+---
+
+<section class="relative overflow-hidden py-16 md:py-32">
+  <div class="container space-y-8 text-center">
+    {
+      image && (
+        <OptimizedImage
+          src={image}
+          alt="404"
+          width={670}
+          height={300}
+          class="mx-auto max-w-full"
+          data-aos="zoom-in"
+          data-aos-delay="200"
+          data-aos-duration="600"
+        />
+      )
+    }
+    {
+      title && (
+        <SectionTitle class="text-h2-sm md:text-h2 font-bold" title={title} />
+      )
+    }
+    {
+      description && (
+        <p class="text-text-default/80 mx-auto max-w-4xl leading-tight md:text-xl lg:text-2xl">
+          {description}
+        </p>
+      )
+    }
+
+    {button && <Button {...button} />}
+  </div>
+</section>

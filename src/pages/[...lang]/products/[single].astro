@@ -1,0 +1,88 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { getEntryRouteParam, supportedLanguages } from "@/lib/utils/i18nUtils";
+import { render } from "astro:content";
+import ContactSection from "@/components/sections/ContactSection.astro";
+import ProductHero from "@/layouts/components/sections/ProductHero.astro";
+import GlassWoolFeltFeatures from "@/components/sections/GlassWoolFeltFeatures.astro";
+import GlassWoolFeltSpecs from "@/components/sections/GlassWoolFeltSpecs.astro";
+import ProductsB2BCapabilities from "@/components/sections/ProductsB2BCapabilities.astro";
+import ProductsSupplyChain from "@/components/sections/ProductsSupplyChain.astro";
+import ProductsFAQ from "@/components/sections/ProductsFAQ.astro";
+import RubberPlasticProductHero from "@/layouts/components/sections/RubberPlasticProductHero.astro";
+import RubberPlasticFeatures from "@/components/sections/RubberPlasticFeatures.astro";
+import RubberPlasticSpecs from "@/components/sections/RubberPlasticSpecs.astro";
+import RubberPlasticProductsB2BCapabilities from "@/components/sections/RubberPlasticProductsB2BCapabilities.astro";
+import RubberPlasticProductsSupplyChain from "@/components/sections/RubberPlasticProductsSupplyChain.astro";
+import RubberPlasticProductsFAQ from "@/components/sections/RubberPlasticProductsFAQ.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang: any) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const serviceIndex: any = await getEntryCTM(
+        "products" as any,
+        "-index",
+        lang.languageCode,
+      );
+
+      let services = await getCollectionCTM(
+        "products" as any,
+        lang.languageCode,
+      );
+
+      if (serviceIndex?.data.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      return services.map((service: any) => ({
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+          single: getEntryRouteParam(service),
+        },
+        props: {
+          service,
+          serviceIndex,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const isRubberPipe = service.id.includes("rubber-plastic") || service.slug?.includes("rubber-plastic");
+---
+
+<Base {...service.data}>
+  
+  {isRubberPipe ? (
+    <RubberPlasticProductHero {...service.data} />
+    <RubberPlasticFeatures />
+    <RubberPlasticSpecs />
+    <RubberPlasticProductsB2BCapabilities />
+    <RubberPlasticProductsSupplyChain />
+    <RubberPlasticProductsFAQ />
+
+  ) : (
+
+    <ProductHero {...service.data} />
+    <GlassWoolFeltFeatures />
+    <GlassWoolFeltSpecs />
+    <ProductsB2BCapabilities />
+    <ProductsSupplyChain />
+    <ProductsFAQ />
+  )}
+
+  <ContactSection />
+</Base>

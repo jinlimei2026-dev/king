@@ -1,0 +1,634 @@
+---
+import config from ".astro/config.generated.json";
+import type { z } from "astro/zod";
+import type { contactFormSchema, inputFieldSchema } from "@/sections.schema";
+import Button from "@/components/Button.astro";
+import { markdownify, toLowerCase } from "@/lib/utils/textConverter";
+
+type FormType = z.infer<typeof contactFormSchema>;
+type InputField = z.infer<typeof inputFieldSchema>;
+type InputItem = NonNullable<InputField["items"]>[number];
+type DropdownItem = NonNullable<
+  NonNullable<InputField["dropdown"]>["items"]
+>[number];
+
+interface Props {
+  form: FormType;
+  class?: string;
+}
+
+const {
+  settings: { contactFormAction, contactFormProvider },
+} = config;
+
+const genIdFromLabel = (label: string) =>
+  toLowerCase(label).replace(/\s+/g, "-");
+
+const getFieldName = (input: InputField) =>
+  input.items?.[0]?.name || input.name || input.label || "contact-field";
+
+const withRequiredMark = (value: string | undefined, required?: boolean) => {
+  const content = value || "";
+  if (!required || content.includes("*")) {
+    return content;
+  }
+  return `${content} *`;
+};
+
+const combineRadio = (list: z.infer<typeof inputFieldSchema>[]) => {
+  const groupMap: Record<
+    string,
+    {
+      index: number;
+      groupLabel?: string;
+      items: z.infer<typeof inputFieldSchema>[];
+    }
+  > = {};
+  const result: any[] = [...list];
+
+  list.forEach((item, index) => {
+    if (item.group) {
+      if (!groupMap[item.group]) {
+        groupMap[item.group] = {
+          index,
+          groupLabel: item.groupLabel || "",
+          items: [],
+        };
+      }
+      groupMap[item.group].items.push(item);
+    }
+  });
+
+  Object.entries(groupMap).forEach(
+    ([groupName, { index, groupLabel, items }]) => {
+      result[index] = { group: groupName, groupLabel, items };
+      for (let i = result.length - 1; i > index; i--) {
+        if (result[i].group === groupName) {
+          result.splice(i, 1);
+        }
+      }
+    },
+  );
+  return result;
+};
+
+const getSelectConfig = (input: InputField) =>
+  JSON.stringify({
+    hasSearch: input.dropdown?.type === "search",
+    searchPlaceholder:
+      input.dropdown?.type === "search"
+        ? input.dropdown.search?.placeholder || "Search..."
+        : "",
+    searchClasses: "contact-form-select-search",
+    searchWrapperClasses: "contact-form-select-search-wrap",
+    placeholder: withRequiredMark(
+      input.placeholder || "Select an option",
+      input.required,
+    ),
+    toggleTag:
+      '<button type="button" aria-expanded="false"><span class="contact-form-select-title" data-title></span></button>',
+    toggleClasses: "contact-form-select-toggle",
+    dropdownClasses: "contact-form-select-dropdown",
+    optionClasses: "contact-form-select-option",
+    optionTemplate:
+      '<div class="contact-form-select-option-inner"><span data-title></span><span class="contact-form-select-selected-icon hidden hs-selected:block"><svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></div>',
+    extraMarkup: [
+      '<div class="contact-form-select-arrow"><svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></div>',
+    ],
+  });
+
+let { form } = Astro.props;
+form = {
+  ...form,
+  inputs: combineRadio(form.inputs),
+};
+
+const messageInputs = form.inputs.filter((input: InputField) => input.note);
+const visibleInputs = form.inputs.filter((input: InputField) => !input.note);
+const messageContent = {
+  success:
+    messageInputs.find((input) => input.note === "success")?.content || "",
+  error:
+    messageInputs.find((input) => input.note === "deprecated")?.content || "",
+};
+
+const isFrench = Astro.currentLocale === "fr";
+const defaultPendingMessage = isFrench
+  ? "Envoi de votre message..."
+  : "Submitting your message...";
+const defaultSuccessMessage =
+  messageContent.success ||
+  (isFrench
+    ? "Nous avons bien recu votre message. Nous vous repondrons des que possible."
+    : "We have received your message. We'll get back to you as soon as possible.");
+const defaultErrorMessage =
+  messageContent.error ||
+  (isFrench
+    ? "Une erreur s'est produite. Veuillez reessayer."
+    : "Something went wrong. Please try again.");
+---
+
+<form
+  id="contact-form"
+  {...{
+    "data-action": contactFormAction,
+    "data-provider": contactFormProvider,
+    "data-netlify": contactFormProvider === "netlify" ? "true" : undefined,
+    action: contactFormProvider === "netlify" ? contactFormAction : undefined,
+  }}
+  method="post"
+  class:list={["contact-form", Astro.props.class]}>
+  {
+    form.emailSubject && (
+      <input
+        type="hidden"
+        name={
+          ["formsubmit.co", "formspree"].includes(contactFormProvider)
+            ? "_subject"
+            : "subject"
+        }
+        value={form.emailSubject}
+      />
+    )
+  }
+
+  {
+    contactFormProvider === "formsubmit.co" && (
+      <input type="hidden" name="_template" value="table" />
+    )
+  }
+
+  {
+    visibleInputs.map((input: InputField) => (
+      <div
+        input-wrapper
+        data-field-name={getFieldName(input)}
+        class:list={[
+          "contact-form-field",
+          input.halfWidth
+            ? "contact-form-field--half"
+            : "contact-form-field--full",
+          input.parentClass,
+        ]}>
+        {!input.note && input.items && input.groupLabel && (
+          <label class="contact-form-field-label">{input.groupLabel}</label>
+        )}
+
+        {input.dropdown ? (
+          <div class="contact-form-control-shell contact-form-select-shell">
+            <select
+              {...(input.id && { id: input.id })}
+              data-name={getFieldName(input)}
+              data-hs-select={getSelectConfig(input)}
+              class="contact-form-native-select"
+              {...(input.required && { required: true })}>
+              <option value="">Select option</option>
+              {input.dropdown.items?.map((option: DropdownItem) => (
+                <option
+                  {...(option.selected && { selected: true })}
+                  value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : input.tag === "textarea" ? (
+          <div class="contact-form-control-shell">
+            <textarea
+              rows={input.rows || "4"}
+              name={getFieldName(input)}
+              placeholder={withRequiredMark(
+                input.placeholder || "Enter message",
+                input.required,
+              )}
+              class="contact-form-control contact-form-control--textarea"
+              {...(input.required && { required: true })}
+              set:html={input.defaultValue || ""}
+            />
+          </div>
+        ) : input.items ? (
+          <div class="contact-form-choice-group">
+            {input.items?.map((item: InputItem) => (
+              <div class="contact-form-choice-item">
+                <input
+                  {...{
+                    value:
+                      typeof item.value === "boolean"
+                        ? String(item.value)
+                        : item.value || item.label,
+                    checked: item.checked ? true : undefined,
+                  }}
+                  type={item.type || "text"}
+                  name={item.name || "field"}
+                  id={item.id || genIdFromLabel(item.label || "field")}
+                  class:list={[
+                    "contact-form-choice-input",
+                    item.type === "radio"
+                      ? "contact-form-choice-input--radio"
+                      : "contact-form-choice-input--checkbox",
+                  ]}
+                  {...(item.required && { required: true })}
+                />
+                <label
+                  for={item.id || genIdFromLabel(item.label || "field")}
+                  class="contact-form-choice-label"
+                  set:html={markdownify(item.label) || "Label"}
+                />
+              </div>
+            ))}
+          </div>
+        ) : input.type === "checkbox" || input.type === "radio" ? (
+          <div class="contact-form-choice-group">
+            <div class="contact-form-choice-item">
+              <input
+                {...{
+                  value:
+                    typeof input.value === "boolean"
+                      ? String(input.value)
+                      : input.value || input.label,
+                  checked: input.checked ? true : undefined,
+                }}
+                type={input.type || "text"}
+                name={input.name || "field"}
+                id={input.id || genIdFromLabel(input.label || "field")}
+                placeholder={input.placeholder || "Enter value"}
+                class:list={[
+                  "contact-form-choice-input",
+                  input.type === "radio"
+                    ? "contact-form-choice-input--radio"
+                    : "contact-form-choice-input--checkbox",
+                ]}
+                {...(input.required && { required: true })}
+              />
+              <label
+                for={input.id || genIdFromLabel(input.label || "field")}
+                class="contact-form-choice-label">
+                <span
+                  set:html={
+                    (input.label && markdownify(input.label)) ||
+                    input.label ||
+                    "Label"
+                  }
+                />
+              </label>
+            </div>
+          </div>
+        ) : (
+          !input.note && (
+            <div class="contact-form-control-shell">
+              <input
+                {...(input.defaultValue && {
+                  value: input.defaultValue,
+                })}
+                type={input.type || "text"}
+                name={getFieldName(input)}
+                autocomplete="on"
+                placeholder={withRequiredMark(
+                  input.placeholder || "Enter text",
+                  input.required,
+                )}
+                class="contact-form-control"
+                {...(input.required && { required: true })}
+              />
+            </div>
+          )
+        )}
+      </div>
+    ))
+  }
+
+  {
+    form.submitButton && (
+      <div class="contact-form-submit">
+        <Button
+          tag="button"
+          type="submit"
+          id="contact-submit"
+          label={form.submitButton?.label ?? "Send Message"}
+          variant="fill"
+          class="btn hover:btn-primary mt-0 px-8 py-4!"
+          icon={{ enable: true, name: "ArrowUpRight", position: "left" }}
+        />
+      </div>
+    )
+  }
+
+  <div
+    class="contact-form-message contact-form-message--pending message pending hidden"
+    role="status"
+    aria-live="polite">
+    <div class="flex items-center gap-3">
+      <span
+        class="inline-flex size-2.5 shrink-0 animate-pulse rounded-full bg-white">
+      </span>
+      <div
+        class="contact-form-message-content"
+        data-default={defaultPendingMessage}>
+        {defaultPendingMessage}
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="contact-form-message contact-form-message--success message success hidden"
+    role="status"
+    aria-live="polite">
+    <div
+      class="contact-form-message-content"
+      data-default={defaultSuccessMessage}>
+      {defaultSuccessMessage}
+    </div>
+  </div>
+
+  <div
+    class="contact-form-message contact-form-message--error message error hidden"
+    role="alert"
+    aria-live="assertive">
+    <div
+      class="contact-form-message-content"
+      data-default={defaultErrorMessage}>
+      {defaultErrorMessage}
+    </div>
+  </div>
+
+  {
+    form.note && (
+      <div class="contact-form-note" set:html={markdownify(form.note, true)} />
+    )
+  }
+</form>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById(
+      "contact-form",
+    ) as HTMLFormElement | null;
+    if (!form) return;
+
+    let formUtils: typeof import("@/lib/utils/FormHandle") | undefined;
+    let initialized = false;
+    let initializing = false;
+
+    const makeNativeSelectFocusable = (tag: HTMLSelectElement) => {
+      tag.style.display = "block";
+      tag.style.position = "absolute";
+      tag.style.inset = "0";
+      tag.style.width = "100%";
+      tag.style.height = "100%";
+      tag.style.opacity = "0";
+      tag.style.pointerEvents = "none";
+      tag.style.zIndex = "1";
+    };
+
+    const getFieldWrapper = (
+      target: string | Element | null | undefined,
+    ): HTMLElement | null => {
+      if (!target) return null;
+      if (typeof target !== "string") {
+        return target.closest("[input-wrapper]");
+      }
+      const escapedName =
+        typeof CSS !== "undefined" && CSS.escape ? CSS.escape(target) : target;
+      return form.querySelector<HTMLElement>(
+        `[input-wrapper][data-field-name="${escapedName}"]`,
+      );
+    };
+
+    const markFieldFilled = (
+      target: string | Element | null | undefined,
+      filled: boolean,
+    ) => {
+      const field = getFieldWrapper(target);
+      if (!field) return;
+      field.classList.toggle("is-filled", filled);
+      if (filled) {
+        field.classList.remove("is-error");
+      }
+    };
+
+    const markFieldError = (target: string | Element | null | undefined) => {
+      const field = getFieldWrapper(target);
+      if (!field) return;
+      field.classList.add("is-error");
+      field.classList.remove("is-success");
+    };
+
+    const clearFieldError = (target: string | Element | null | undefined) => {
+      const field = getFieldWrapper(target);
+      if (!field) return;
+      field.classList.remove("is-error");
+    };
+
+    const syncFieldValueState = (
+      element: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+    ) => {
+      if (element instanceof HTMLSelectElement) {
+        markFieldFilled(element, element.value !== "");
+        return;
+      }
+      if (element.type === "radio" || element.type === "checkbox") {
+        const checkedItems = form.querySelectorAll(
+          `[name="${element.name}"]:checked`,
+        );
+        markFieldFilled(element, checkedItems.length > 0);
+        return;
+      }
+      markFieldFilled(element, Boolean(element.value.trim()));
+    };
+
+    const syncSelectState = (items: HTMLSelectElement[]) => {
+      items.forEach((item) => {
+        const name = item.getAttribute("data-name");
+        if (name) {
+          item.setAttribute("name", name);
+        }
+        formUtils?.validateSelectTag(item);
+      });
+    };
+
+    const initForm = async () => {
+      if (initialized || initializing) return;
+      initializing = true;
+      try {
+        const [{ default: HSSelect }, importedFormUtils] = await Promise.all([
+          import("@preline/select"),
+          import("@/lib/utils/FormHandle"),
+        ]);
+        formUtils = importedFormUtils;
+        HSSelect.autoInit();
+
+        let selectTags = form.querySelectorAll(
+          "[input-wrapper]:not(.hidden) select[data-hs-select]",
+        ) as NodeListOf<HTMLSelectElement>;
+
+        selectTags.forEach((tag) => makeNativeSelectFocusable(tag));
+        syncSelectState(Array.from(selectTags));
+        selectTags.forEach((tag) => {
+          tag.addEventListener("change", () => {
+            syncSelectState(Array.from(selectTags));
+            clearFieldError(tag);
+          });
+        });
+
+        const inputs = form.querySelectorAll<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >("input[name], textarea[name], select[data-hs-select]");
+
+        inputs.forEach((el) => {
+          const eventName =
+            el instanceof HTMLInputElement &&
+            (el.type === "checkbox" || el.type === "radio")
+              ? "change"
+              : "input";
+          el.addEventListener(eventName, () => {
+            syncFieldValueState(el);
+            clearFieldError(el);
+          });
+          if (eventName !== "change") {
+            el.addEventListener("change", () => {
+              syncFieldValueState(el);
+              clearFieldError(el);
+            });
+          }
+          syncFieldValueState(el);
+        });
+
+        form.addEventListener(
+          "invalid",
+          (e) => {
+            const target = e.target;
+            if (
+              target instanceof HTMLInputElement ||
+              target instanceof HTMLTextAreaElement ||
+              target instanceof HTMLSelectElement
+            ) {
+              markFieldError(target);
+            }
+          },
+          true,
+        );
+
+        form.addEventListener("submit", async (e: Event) => {
+          e.preventDefault();
+          const provider = form.getAttribute("data-provider") || "";
+          const action = form.getAttribute("data-action") || "";
+
+          form
+            .querySelectorAll<HTMLElement>("[input-wrapper]")
+            .forEach((field) => field.classList.remove("is-error"));
+
+          selectTags = form.querySelectorAll(
+            "[input-wrapper]:not(.hidden) select[data-hs-select]",
+          ) as NodeListOf<HTMLSelectElement>;
+
+          syncSelectState(Array.from(selectTags));
+
+          let hasError = false;
+          const formData = new FormData(form);
+          const handledGroups = new Set<string>();
+
+          form
+            .querySelectorAll<
+              HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >("[required]")
+            .forEach((el) => {
+              const name = el.name;
+              const value = formData.get(name);
+              if (el.type === "radio" || el.type === "checkbox") {
+                if (handledGroups.has(name)) return;
+                handledGroups.add(name);
+                const group = form.querySelectorAll(`[name="${name}"]:checked`);
+                if (group.length === 0) {
+                  markFieldError(name);
+                  hasError = true;
+                } else {
+                  markFieldFilled(name, true);
+                }
+                return;
+              }
+              if (!value || (typeof value === "string" && !value.trim())) {
+                markFieldError(el);
+                hasError = true;
+                return;
+              }
+              if (
+                el instanceof HTMLInputElement &&
+                el.type === "email" &&
+                typeof value === "string" &&
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+              ) {
+                markFieldError(el);
+                hasError = true;
+                return;
+              }
+              markFieldFilled(el, true);
+            });
+
+          if (hasError || !formUtils?.isFormFilled(form)) return;
+
+          formUtils.setMessage("Submitting message...", "pending", true, form);
+
+          const submitBtn = document.getElementById(
+            "contact-submit",
+          ) as HTMLButtonElement | null;
+          let originalBtnContent = "";
+
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            originalBtnContent = submitBtn.innerHTML;
+          }
+
+          try {
+            switch (provider) {
+              case "netlify":
+                await formUtils.netlifySubmit(form, action);
+                break;
+              case "formsubmit.co":
+                await formUtils.formSubmit({ form, action });
+                break;
+              case "formspree":
+                await formUtils.formspreeSubmit(
+                  Object.fromEntries(new FormData(form).entries()),
+                  5000,
+                  form,
+                );
+                break;
+              default:
+                throw new Error("Unknown form provider.");
+            }
+          } catch (error) {
+            formUtils.setMessage(
+              "Submission failed. Please contact us directly at jinlimei@kingsendainsulation.com.",
+              false,
+              false,
+              form,
+            );
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalBtnContent;
+            }
+          }
+        });
+        initialized = true;
+      } finally {
+        initializing = false;
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          void initForm();
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    observer.observe(form);
+    form.addEventListener("focusin", () => void initForm(), { once: true });
+    form.addEventListener("pointerenter", () => void initForm(), {
+      once: true,
+    });
+  });
+</script>

@@ -1,0 +1,55 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import InfoBlockList from "@/layouts/shortcodes/InfoBlockList.astro";
+import InfoBlockItem from "@/layouts/shortcodes/InfoBlockItem.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "custom-service-process",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, subtitle, description, processImage, steps } = sectionData.data;
+---
+
+<section class="w-full bg-white py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div
+      class="mx-auto mb-16 max-w-3xl text-center lg:mb-24"
+      data-aos="fade-up">
+      <div class="mb-6 flex items-center justify-center gap-3">
+        <div class="h-2 w-2 rounded-full bg-[#2563eb]"></div>
+        <span
+          class="text-xs font-bold tracking-[0.2em] text-[#2563eb] uppercase">
+          {subtitle}
+        </span>
+      </div>
+      <h2
+        class="mb-6 text-4xl font-bold tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
+        {title}
+      </h2>
+      <p class="text-lg leading-relaxed text-gray-500">
+        {description}
+      </p>
+    </div>
+
+    <div data-aos="fade-up" data-aos-delay="100">
+      <div class="[counter-reset:list-counter]">
+        <InfoBlockList imageSrc={processImage.src} imageAlt={processImage.alt}>
+          {
+            steps &&
+              steps.map((step: any) => (
+                <InfoBlockItem
+                  title={step.title}
+                  class="[counter-increment:list-counter]">
+                  <p>{step.description}</p>
+                </InfoBlockItem>
+              ))
+          }
+        </InfoBlockList>
+      </div>
+    </div>
+  </div>
+</section>

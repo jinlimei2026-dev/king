@@ -1,0 +1,124 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "rubber-plastic-specs",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, subtitle, description, images, specs, footerLabel } =
+  sectionData.data;
+---
+
+<section
+  id="specs"
+  class="relative w-full overflow-hidden border-y border-white/5 bg-[#050505] py-24 md:py-32">
+  <div
+    class="absolute top-0 left-1/2 -z-10 h-125 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00f0ff] opacity-[0.03] blur-[100px]">
+  </div>
+
+  <div class="mx-auto flex w-full max-w-375 flex-col px-6 md:px-12 lg:px-20">
+    <div
+      class="mb-16 w-full border-b border-white/10 pb-12 lg:mb-24 lg:pb-20"
+      data-aos="fade-up">
+      <div
+        class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-20">
+        <div
+          class="flex flex-col items-start lg:col-span-5"
+          data-aos="fade-right">
+          <div class="mb-8">
+            <span
+              class="inline-flex items-center gap-2 rounded-full border border-[#00f0ff]/20 bg-[#00f0ff]/10 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-[#00f0ff] uppercase">
+              <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00f0ff]">
+              </span>
+              {subtitle}
+            </span>
+          </div>
+
+          <h2
+            class="mb-8 text-5xl leading-[1.05] font-black tracking-tighter text-white md:text-6xl lg:text-[76px]">
+            {title}
+          </h2>
+
+          <p
+            class="max-w-lg text-lg leading-relaxed font-medium text-white/50 md:text-xl">
+            {description}
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-2 gap-3 md:gap-4 lg:col-span-7 lg:gap-6"
+          data-aos="fade-left">
+          {
+            images &&
+              images.length > 0 &&
+              images.slice(0, 4).map((img: any) => (
+                <div class="group relative aspect-square w-full overflow-hidden rounded-xl border border-white/5 bg-[#111] lg:rounded-3xl">
+                  <div class="absolute inset-0 z-10 bg-[#00f0ff]/10 opacity-0 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-100" />
+                  <OptimizedImage
+                    src={img.src}
+                    alt={img.alt || "Product detail"}
+                    width={400}
+                    height={400}
+                    class="h-full w-full object-cover opacity-80 mix-blend-luminosity transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 group-hover:mix-blend-normal"
+                  />
+                </div>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="grid w-full grid-cols-1 gap-0">
+      {
+        specs &&
+          specs.map((spec: any, index: number) => (
+            <div
+              class="group flex flex-col rounded-xl border-b border-white/5 px-6 py-10 transition-all duration-300 hover:border-l-4 hover:border-l-[#00f0ff] hover:bg-white/2 lg:flex-row lg:items-center"
+              data-aos="fade-up"
+              data-aos-delay={index * 50}>
+              <div class="mb-4 lg:mb-0 lg:w-5/12">
+                <span class="text-xs font-bold tracking-widest text-white/40 uppercase transition-colors group-hover:text-[#00f0ff]">
+                  {String(index + 1).padStart(2, "0")}{" "}
+                  <span class="mx-2 text-white/20">|</span> {spec.label}
+                </span>
+              </div>
+
+              <div class="flex flex-1 flex-col gap-4 md:flex-row md:items-baseline md:justify-between">
+                <div class="flex items-baseline gap-3">
+                  <span class="text-4xl font-bold tracking-tighter text-white transition-colors group-hover:text-white md:text-5xl lg:text-6xl">
+                    {spec.value}
+                  </span>
+                  <span class="text-lg font-medium tracking-wide text-white/30 uppercase transition-colors group-hover:text-white/60">
+                    {spec.unit}
+                  </span>
+                </div>
+
+                <div class="max-w-xs text-left md:text-right">
+                  <p class="text-sm font-medium text-white/40 italic transition-colors group-hover:text-white/80">
+                    {spec.note}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+      }
+    </div>
+
+    <div class="mt-20 flex items-center justify-between px-4 opacity-20">
+      <div class="h-px flex-1 bg-white/50"></div>
+      {
+        footerLabel && (
+          <span class="shrink-0 px-6 text-[10px] font-bold tracking-[0.5em] text-white/70 uppercase">
+            {footerLabel}
+          </span>
+        )
+      }
+      <div class="h-px flex-1 bg-white/50"></div>
+    </div>
+  </div>
+</section>

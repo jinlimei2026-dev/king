@@ -1,0 +1,176 @@
+{
+  "main": [
+    {
+      "enable": true,
+      "name": "Home",
+      "weight": 0,
+      "url": "/"
+    },
+    {
+      "enable": true,
+      "name": "Products",
+      "weight": 1,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "Glass Wool Felt",
+          "url": "/products/glass-wool-felt/",
+          "description": "High-density thermal glass wool blankets with premium A1-rated fire protection."
+        },
+        {
+          "enable": true,
+          "name": "Rubber Plastic Pipe",
+          "url": "/products/rubber-plastic-pipe/",
+          "description": "Closed-cell elastomeric foam pipes designed for superior condensation control."
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "Applications",
+      "weight": 2,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "HVAC Systems",
+          "url": "/case/hvac-systems/",
+          "description": "Custom insulation solutions engineered to reduce HVAC energy loss and condensation."
+        },
+        {
+          "enable": true,
+          "name": "Industrial Piping",
+          "url": "/case/industrial-piping/",
+          "description": "Durable high-temperature insulation for chemical and industrial fluid networks."
+        },
+        {
+          "enable": true,
+          "name": "Steel Structure",
+          "url": "/case/steel-structure/",
+          "description": "Lightweight, fire-resistant insulation blankets for large-scale steel structures."
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "Why Us",
+      "weight": 3,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "About Us",
+          "url": "/about/",
+          "description": "Discover our 40-year legacy of manufacturing excellence from our Hebei base."
+        },
+        {
+          "enable": true,
+          "name": "Warranty",
+          "url": "/warranty/",
+          "description": "Committed to quality with A1/B1 fire rating and international compliance."
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "Support",
+      "weight": 4,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "FAQs",
+          "url": "/support/faq/",
+          "description": "Quick answers regarding our insulation specifications, MOQ, and policies."
+        },
+        {
+          "enable": true,
+          "name": "Custom Service",
+          "url": "/support/custom-service/",
+          "description": "Tailored OEM/ODM services including private labeling and custom dimensions."
+        },
+        {
+          "enable": true,
+          "name": "Shipping Logistics",
+          "url": "/support/shipping-logistics/",
+          "description": "Optimized vacuum compression shipping to reduce your freight costs by up to 30%."
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "Blog",
+      "weight": 5,
+      "url": "/blog/"
+    },
+    {
+      "enable": true,
+      "name": "Contact Us",
+      "weight": 6,
+      "url": "/contact/"
+    }
+  ],
+  "topbar": [
+    {
+      "enable": true,
+      "name": "A1 Fireproof",
+      "url": "/about/certifications/",
+      "weight": 0
+    },
+    {
+      "enable": true,
+      "name": "Fast Delivery",
+      "url": "/about/our-advantage/",
+      "weight": 1
+    }
+  ],
+  "footer": [
+    {
+      "label": "Core Products",
+      "list": [
+        {
+          "enable": true,
+          "name": "Glass Wool Felt",
+          "url": "/products/glass-wool-felt/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "Rubber Plastic Pipe",
+          "url": "/products/rubber-plastic-pipe/",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "label": "Distributor Hub",
+      "list": [
+        {
+          "enable": true,
+          "name": "About Factory",
+          "url": "/about/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "Agile Supply",
+          "url": "/about/our-advantage/",
+          "weight": 1
+        },
+        {
+          "enable": true,
+          "name": "Global Cases",
+          "url": "/case/",
+          "weight": 2
+        },
+        {
+          "enable": true,
+          "name": "Contact Us",
+          "url": "/contact/",
+          "weight": 3
+        }
+      ]
+    }
+  ]
+}

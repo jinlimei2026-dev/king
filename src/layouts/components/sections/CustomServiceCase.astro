@@ -1,0 +1,106 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "custom-service-case",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { subtitle, title, buttonLabel, buttonUrl, cases } = sectionData.data;
+
+const carouselCases = [...cases, ...cases];
+---
+
+<section class="w-full overflow-hidden bg-white py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div
+      class="mb-16 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+      <div class="w-full md:w-2/3" data-aos="fade-right">
+        <div class="mb-4 flex items-center gap-3">
+          <div class="h-2 w-2 rounded-full bg-[#2563eb]"></div>
+          <div class="h-px w-12 bg-[#2563eb]"></div>
+          <span
+            class="text-xs font-bold tracking-[0.2em] text-[#2563eb] uppercase">
+            {subtitle}
+          </span>
+        </div>
+        <h2
+          class="text-4xl leading-[1.1] font-bold tracking-tight text-gray-900 md:text-5xl lg:text-[56px]">
+          {title}
+        </h2>
+      </div>
+
+      <div
+        class="flex w-full md:w-1/3 md:justify-end"
+        data-aos="fade-left"
+        data-aos-delay="100">
+        <a
+          href={buttonUrl}
+          class="group inline-flex items-center gap-3 rounded-full bg-[#2563eb] px-8 py-4 font-bold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:bg-[#1d4ed8]">
+          {buttonLabel}
+          <span
+            class="transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <div class="relative mt-10 w-full">
+      <div
+        id="gallery-track"
+        class="scrollbar-hide flex cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4 active:cursor-grabbing">
+        {
+          carouselCases.map((item: any) => (
+            <div class="relative aspect-4/3 w-full shrink-0 snap-start overflow-hidden rounded-4xl shadow-md sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.3333%-1rem)]">
+              <OptimizedImage
+                src={item.image}
+                alt={item.alt}
+                class="h-full w-full object-cover"
+                width={600}
+                height={450}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("gallery-track");
+    if (!track) return;
+    let isPaused = false;
+    track.addEventListener("touchstart", () => (isPaused = true));
+    track.addEventListener("touchend", () => (isPaused = false));
+
+    setInterval(() => {
+      if (isPaused) return;
+
+      const itemWidth = track.children[0].getBoundingClientRect().width;
+      const scrollAmount = itemWidth + 24;
+
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 10) {
+        track.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        track.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }, 2500);
+  });
+</script>

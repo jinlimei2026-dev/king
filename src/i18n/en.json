@@ -1,0 +1,96 @@
+{
+  "common": {
+    "readMore": "Read More Details",
+    "category": "Category",
+    "emailPlaceholder": "Email Address",
+    "emailLabel": "Email",
+    "subscribeSuccess": "Subscribed successfully! We will be in touch shortly.",
+    "subscribeFail": "Failed to subscribe. Please try again.",
+    "subscribeError": "An unexpected error occurred.",
+    "bannerPattern": "Banner pattern",
+    "customerAvatar": "Customer avatar",
+    "decorativePattern": "Decorative pattern",
+    "experience": "Experience",
+    "aboutUs": "About us",
+    "experienceBadge": "Experience badge",
+    "paginationNext": "Next",
+    "paginationPrevious": "Previous",
+    "contactDropdownSearch404": "No results were found",
+    "404Heading": "404 - Page Not Found",
+    "404Description": "Oh dear, it seems like you've ventured off the map.",
+    "404ButtonLabel": "Go Back to Home",
+    "send": "Send",
+    "share": "Share",
+    "projectDetails": "Project Details"
+  },
+  "navigation": {
+    "buttonLabel": "Get a Quote"
+  },
+  "contactInfo": {
+    "locationLabel": "Location",
+    "phoneLabel": "Phone Number",
+    "emailLabel": "Email"
+  },
+  "subscription": {
+    "title": "Get Our Latest Catalog",
+    "description": "Leave your email to receive our latest product specifications, wholesale offers, and flexible stock rotation policies."
+  },
+  "integration": {
+    "relatedIntegrationSectionTitle": "You might be **interested in**",
+    "backToIntegration": "Browse"
+  },
+  "footerBlock": {
+    "description": "Delivering superior thermal and acoustic insulation solutions globally. We empower independent retailers and large distributors with premium products directly from our strategic Hebei manufacturing base.",
+    "copyright": "Copyright © 2026 Hebei Kingsenda. All Rights Reserved.",
+    "contactBlockLabel": "Contact",
+    "aboutUsLabel": "About us",
+    "quickLinksLabel": "Quick Links",
+    "officeLabel": "Office",
+    "socialLabel": "Social",
+    "recentPostsLabel": "Recent Posts"
+  },
+  "blog": {
+    "comments": "Comments",
+    "noComments": "No Comments",
+    "previousPost": "Previous Post",
+    "nextPost": "Next Post"
+  },
+  "button": {
+    "readMore": "Read More",
+    "viewProjects": "View Projects",
+    "view": "View",
+    "getAQuote": "Get A Quote",
+    "discoverMore": "Discover More",
+    "findOutMore": "Find out more",
+    "showAll": "Show All"
+  },
+  "header": {
+    "announcement": "Welcome to Kingsenda - Premium Glass Wool & Rubber Plastic Pipe Manufacturer. [Contact Us](/contact/)"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "linkedin": "Linkedin"
+  },
+  "widgets": {
+    "postSearchTitle": "Search",
+    "postSearchFormPlaceholder": "Search",
+    "categoriesTitle": "Categories",
+    "recentPostsTitle": "Recent Posts"
+  },
+  "aria": {
+    "toggleNav": "Toggle navigation",
+    "backToTop": "Back to top",
+    "closeModal": "Close",
+    "playVideo": "Play video",
+    "search": "Search",
+    "prevSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "prevTestimonial": "Previous testimonial",
+    "nextTestimonial": "Next testimonial",
+    "languageMenu": "Language menu",
+    "pagination": "Pagination",
+    "socialLinks": "Social links",
+    "aboutCompany": "About company"
+  }
+}

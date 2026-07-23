@@ -1,0 +1,110 @@
+---
+import {
+  getLocaleUrlCTM,
+  normalizeLocaleCode,
+  supportedLanguages,
+} from "@/lib/utils/i18nUtils";
+import { getLocalizedPathnameCTM } from "@/lib/utils/localizedRouteResolver";
+import { plainify, removeWhitespace } from "@/lib/utils/textConverter";
+import config from ".astro/config.generated.json";
+
+let {
+  title,
+  metaTitle,
+  description,
+  metaDescription,
+  canonical,
+  keywords = config.seo.keywords,
+  disableTagline,
+  author = config.seo.author,
+  robots = config.seo.robots,
+} = Astro.props;
+
+title = plainify(metaTitle ? metaTitle : title ? title : config.site.title);
+keywords = keywords.join(", ");
+
+if (!disableTagline) {
+  title =
+    title +
+    (config.site.tagline &&
+      (config.site.taglineSeparator || " - ") + config.site.tagline);
+}
+
+description = plainify(
+  metaDescription
+    ? metaDescription
+    : description
+      ? description
+      : config.site.description,
+);
+
+const currentLocale = normalizeLocaleCode(Astro.currentLocale);
+const toAbsoluteUrl = (url: string) => new URL(url, config.site.baseUrl).href;
+
+const localizedCanonicalPath = await getLocalizedPathnameCTM(
+  Astro.url.pathname,
+  currentLocale,
+  currentLocale,
+);
+
+const canonicalPath = canonical
+  ? getLocaleUrlCTM(canonical, currentLocale)
+  : getLocaleUrlCTM(localizedCanonicalPath, currentLocale);
+
+canonical = toAbsoluteUrl(canonicalPath);
+
+const alternateTags: Array<{ hreflang: string; href: string }> = [];
+if (
+  config.settings.multilingual.enable &&
+  !canonicalPath.includes("blog/category/")
+) {
+  const alternateLinks = await Promise.all(
+    supportedLanguages.map(async (lang) => ({
+      hreflang: lang.languageCode,
+      href: toAbsoluteUrl(
+        getLocaleUrlCTM(
+          await getLocalizedPathnameCTM(
+            Astro.url.pathname,
+            currentLocale,
+            lang.languageCode,
+          ),
+          lang.languageCode,
+        ),
+      ),
+    })),
+  );
+
+  alternateTags.push(...alternateLinks);
+
+  alternateTags.push({
+    hreflang: "x-default",
+    href: toAbsoluteUrl(
+      getLocaleUrlCTM(
+        await getLocalizedPathnameCTM(
+          Astro.url.pathname,
+          currentLocale,
+          config.settings.multilingual.defaultLanguage,
+        ),
+        config.settings.multilingual.defaultLanguage,
+      ),
+    ),
+  });
+}
+---
+
+{title && <title>{removeWhitespace(title)}</title>}
+{
+  description && (
+    <meta name="description" content={removeWhitespace(description)} />
+  )
+}
+{keywords && <meta name="keywords" content={removeWhitespace(keywords)} />}
+{author && <meta name="author" content={removeWhitespace(author)} />}
+{robots && <meta name="robots" content={removeWhitespace(robots)} />}
+{canonical && <link rel="canonical" href={canonical} item-prop="url" />}
+{
+  alternateTags &&
+    alternateTags.map((tag) => (
+      <link rel="alternate" hreflang={tag.hreflang} href={tag.href} />
+    ))
+}

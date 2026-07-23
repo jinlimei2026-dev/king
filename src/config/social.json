@@ -1,0 +1,36 @@
+{
+  "main": [
+    {
+      "enable": true,
+      "label": "Facebook",
+      "lucideIcon": "facebook",
+      "url": "https://www.facebook.com/KingsendaInsulationMaterials/",
+      "isForShare": true,
+      "isForShareProject": true
+    },
+    {
+      "enable": true,
+      "label": "Youtube",
+      "lucideIcon": "youtube",
+      "url": "https://www.youtube.com/@%E9%87%91%E6%A3%AE%E8%BE%BE",
+      "isForShare": false,
+      "isForShareProject": true
+    },
+    {
+      "enable": true,
+      "label": "Linkedin",
+      "lucideIcon": "linkedin",
+      "url": "https://www.linkedin.com/company/124594020/admin/dashboard/",
+      "isForShare": true,
+      "isForShareProject": true
+    },
+    {
+      "enable": true,
+      "label": "TikTok",
+      "lucideIcon": "tiktok-brand",
+      "url": "https://www.tiktok.com/@user4717696158156?is_from_webapp=1&sender_device=pc",
+      "isForShare": false,
+      "isForShareProject": false
+    }
+  ]
+}

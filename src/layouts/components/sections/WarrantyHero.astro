@@ -1,0 +1,49 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "warranty-hero",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, subtitle, bgImage } = sectionData.data;
+---
+
+<section
+  class="relative flex h-[75vh] min-h-112.5 w-full items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    {
+      bgImage ? (
+        <OptimizedImage
+          src={bgImage}
+          alt="Kingsenda Warranty and Support"
+          width={1920}
+          height={1080}
+          class="h-full w-full object-cover object-center"
+        />
+      ) : (
+        <div class="h-full w-full bg-[#0f172a]" />
+      )
+    }
+    <div class="absolute inset-0 bg-[#0f172a]/30"></div>
+  </div>
+
+  <div
+    class="relative z-10 container mx-auto px-6 text-center md:px-12 lg:px-20">
+    <h1
+      class="mx-auto max-w-4xl text-4xl leading-tight font-extrabold text-white sm:text-5xl md:text-6xl"
+      data-aos="fade-up">
+      {title}
+    </h1>
+    <p
+      class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed font-medium text-gray-300 sm:text-xl"
+      data-aos="fade-up"
+      data-aos-delay="100">
+      {subtitle}
+    </p>
+  </div>
+</section>

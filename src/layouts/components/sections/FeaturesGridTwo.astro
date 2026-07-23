@@ -1,0 +1,90 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import type { featuresSectionSchema } from "@/sections.schema";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+type SectionType = Section & NonNullable<z.infer<typeof featuresSectionSchema>>;
+type Props = { content?: SectionType };
+
+let defaultContent = (
+  await getEntryCTM("sections", "features-grid", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { features, bgShape, title, description } = actualContent;
+---
+
+{
+  features && features.length > 0 && (
+    <section
+      id="features"
+      class="section-spacing-vertical relative scroll-mt-28">
+      {bgShape && (
+        <OptimizedImage
+          src={bgShape}
+          width={1920}
+          height={627}
+          class="absolute top-0 left-0 -z-1 size-full bg-transparent object-cover object-left"
+        />
+      )}
+      <div class="container">
+        {(title || description) && (
+          <div
+            class="mb-10 text-center md:mb-14"
+            data-aos="fade-up"
+            data-aos-duration="600">
+            {title && (
+              <h2 class="mb-4 text-3xl font-bold md:text-4xl">{title}</h2>
+            )}
+            {description && (
+              <p class="text-text-default/70 mx-auto max-w-3xl text-lg">
+                {description}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-5 xl:gap-7.5">
+          {features.map((feature, i) => (
+            <div
+              class="bg-theme-light flex flex-col gap-3 rounded-lg p-5 xl:gap-4 xl:px-8.5 xl:py-7"
+              data-aos="fade-up"
+              data-aos-delay={i * 100}
+              data-aos-duration="600">
+              <span class="text-base font-semibold lg:text-lg">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <div class="bg-dark h-px w-full" />
+
+              <h3 class="flex items-center gap-2.5 pt-1 text-sm font-semibold lg:text-lg">
+                {feature.icon && (
+                  <OptimizedImage
+                    src={feature.icon}
+                    alt={feature.title}
+                    width={12}
+                    height={12}
+                  />
+                )}
+                {feature.title}
+              </h3>
+
+              <p
+                class="text-text-default/70 text-sm xl:text-base xl:leading-relaxed"
+                set:html={markdownify(feature.description)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

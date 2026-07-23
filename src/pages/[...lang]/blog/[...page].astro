@@ -1,0 +1,206 @@
+---
+import Base from "@/layouts/Base.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths({ paginate }: { paginate: Function }) {
+  const allPosts = await getCollection("blog", ({ id }) => {
+    return !id.includes("/") || id.includes("english");
+  });
+
+  const sortedPosts = allPosts.sort((a, b) => {
+    const dateA = a.data?.date ? new Date(a.data.date).valueOf() : 0;
+    const dateB = b.data?.date ? new Date(b.data.date).valueOf() : 0;
+    return dateB - dateA;
+  });
+
+  return paginate(sortedPosts, { pageSize: 6 });
+}
+
+const { page } = Astro.props as any;
+if (!page || !page.data) return Astro.redirect("/404");
+---
+
+<Base
+  title="Insights & News"
+  description="Latest updates and industry insights from our company.">
+  <section
+    class="w-full border-b border-gray-200 bg-[#f8f9fa] py-24 text-center md:py-32">
+    <div class="mx-auto max-w-4xl px-6" data-aos="fade-up">
+      <div
+        class="mb-6 inline-block rounded-full bg-[#eff6ff] px-4 py-1.5 text-sm font-bold tracking-widest text-[#2563eb] uppercase">
+        Insights & News
+      </div>
+      <h1
+        class="mb-6 text-4xl leading-[1.15] font-bold tracking-tight text-[#0f172a] md:text-6xl">
+        Blog & Updates
+      </h1>
+    </div>
+  </section>
+
+  <section class="w-full bg-white py-24 md:py-32">
+    <div class="mx-auto max-w-375 px-6 lg:px-20">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+        {
+          page.data.map((post: any, index: number) => {
+            const formattedDate = post.data?.date
+              ? new Date(post.data.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Recent";
+
+            const cleanId = post.id.replace(/\.mdx?$/, "");
+            const slug = cleanId.split("/").pop();
+            const postUrl = `/blog/${slug}/`;
+
+            return (
+              <article
+                class="group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white transition-all duration-500 hover:border-[#2563eb]/20 hover:shadow-2xl"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}>
+                <a
+                  href={postUrl}
+                  data-astro-prefetch="hover"
+                  class="relative block h-64 w-full overflow-hidden">
+                  {post.data?.image ? (
+                    <OptimizedImage
+                      src={post.data.image}
+                      alt={post.data.title}
+                      class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      width={600}
+                      height={400}
+                    />
+                  ) : (
+                    <div class="flex h-full w-full items-center justify-center bg-gray-200">
+                      <i class="fa-regular fa-image text-4xl text-gray-400" />
+                    </div>
+                  )}
+                  {post.data?.category && (
+                    <div class="absolute top-6 left-6 rounded-md bg-white/90 px-3 py-1.5 text-xs font-bold text-[#0f172a] shadow-sm backdrop-blur-sm">
+                      {post.data.category}
+                    </div>
+                  )}
+                </a>
+                <div class="flex flex-1 flex-col p-8 md:p-10">
+                  <div class="mb-4 flex items-center gap-3 text-sm font-medium text-gray-400">
+                    <span class="flex items-center gap-1.5">
+                      <i class="fa-regular fa-calendar text-[#2563eb]" />{" "}
+                      {formattedDate}
+                    </span>
+                  </div>
+                  <a
+                    href={postUrl}
+                    data-astro-prefetch="hover"
+                    class="mb-4 block">
+                    <h2 class="line-clamp-2 text-2xl leading-snug font-bold text-[#0f172a] transition-colors group-hover:text-[#2563eb]">
+                      {post.data?.title}
+                    </h2>
+                  </a>
+                  <p class="mb-8 line-clamp-3 flex-1 leading-relaxed text-gray-500">
+                    {post.data?.description}
+                  </p>
+                  <a
+                    href={postUrl}
+                    data-astro-prefetch="hover"
+                    class="mt-auto inline-flex items-center gap-2 font-bold text-[#2563eb] transition-colors hover:text-[#1d4ed8]">
+                    Read Article{" "}
+                    <span class="transition-transform duration-300 group-hover:translate-x-1">
+                      <i class="fa-solid fa-arrow-right-long" />
+                    </span>
+                  </a>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+
+      {
+        page.lastPage > 1 && (
+          <div
+            class="mt-20 flex items-center justify-center gap-5"
+            data-aos="fade-up">
+            {page.url.prev ? (
+              <a
+                href={page.url.prev}
+                class="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:bg-[#1d4ed8] hover:shadow-lg"
+                aria-label="Previous Page">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  class="h-6 w-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </a>
+            ) : (
+              <div class="flex h-14 w-14 cursor-not-allowed items-center justify-center rounded-full bg-gray-200 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  class="h-6 w-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </div>
+            )}
+            <div class="rounded-full bg-gray-100 px-8 py-3.5 text-sm font-bold text-[#0f172a] shadow-inner">
+              Page <span class="text-[#2563eb]">{page.currentPage}</span> of{" "}
+              {page.lastPage}
+            </div>
+            {page.url.next ? (
+              <a
+                href={page.url.next}
+                class="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:bg-[#1d4ed8] hover:shadow-lg"
+                aria-label="Next Page">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  class="h-6 w-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </a>
+            ) : (
+              <div class="flex h-14 w-14 cursor-not-allowed items-center justify-center rounded-full bg-gray-200 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  class="h-6 w-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>

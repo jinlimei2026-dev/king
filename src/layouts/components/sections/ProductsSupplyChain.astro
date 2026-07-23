@@ -1,0 +1,200 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "products-supply-chain",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { subtitle, title, description, production, certifications, packaging } =
+  sectionData.data;
+---
+
+<div class="flex w-full flex-col items-center pb-16 md:pb-24 lg:pb-32">
+  <div
+    class="mx-auto mb-16 w-full max-w-250 px-6 pt-20 text-center md:mb-20 md:px-12 md:pt-28 lg:pt-36"
+    data-aos="fade-up">
+    <div class="mb-8 flex justify-center">
+      <span
+        class="inline-block rounded-full border border-black/15 bg-black/5 px-4 py-1.5 text-xs font-bold tracking-[0.25em] text-black/70 uppercase">
+        {subtitle}
+      </span>
+    </div>
+
+    <h2
+      class="mb-8 text-5xl leading-[1.05] font-black tracking-tight text-gray-900 md:text-6xl lg:text-[72px]">
+      {title}
+    </h2>
+
+    <p
+      class="mx-auto max-w-2xl text-lg leading-relaxed font-medium text-gray-600 md:text-xl lg:text-2xl">
+      {description}
+    </p>
+  </div>
+
+  {
+    production && (
+      <section
+        class="relative mb-16 w-full overflow-hidden shadow-xl md:mb-24 lg:mb-32"
+        data-aos="fade-up">
+        <div class="absolute inset-0 z-0">
+          {production.image && (
+            <OptimizedImage
+              src={production.image}
+              alt="Manufacturing Process"
+              class="h-full w-full object-cover"
+              width={1920}
+              height={1080}
+            />
+          )}
+        </div>
+
+        <div class="relative z-10 mx-auto flex w-full max-w-350 justify-start px-6 py-16 md:px-12 md:py-24 lg:px-20 lg:py-32">
+          <div class="flex w-full max-w-125 flex-col items-center bg-white p-10 text-center shadow-2xl md:p-14 lg:p-16">
+            <h2 class="mb-8 text-3xl leading-[1.2] font-medium text-[#0a1e3f] md:text-4xl lg:text-[2.5rem]">
+              {production.title}
+            </h2>
+
+            <a
+              href={production.buttonUrl}
+              class="mb-10 inline-flex items-center gap-3 rounded-full border border-[#0a1e3f] px-6 py-2.5 text-sm font-semibold text-[#0a1e3f] transition-colors hover:bg-[#0a1e3f] hover:text-white">
+              {production.buttonLabel}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+
+            <p class="text-sm leading-relaxed text-gray-700 md:text-base">
+              {production.description}
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    certifications && (
+      <section class="mb-16 w-full max-w-350 px-6 md:mb-24 md:px-12 lg:mb-32 lg:px-20">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12">
+          {certifications.map((cert: any, index: number) => (
+            <div
+              class="flex flex-col"
+              data-aos="fade-up"
+              data-aos-delay={index * 150}>
+              <div class="relative mb-6 aspect-square w-full overflow-hidden rounded-4xl bg-gray-200">
+                {cert.image && (
+                  <OptimizedImage
+                    src={cert.image}
+                    alt={cert.title}
+                    class="h-full w-full object-cover"
+                    width={600}
+                    height={600}
+                  />
+                )}
+                <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
+                <div class="absolute bottom-2 left-6">
+                  <span class="text-[5rem] leading-none font-black text-white drop-shadow-lg lg:text-[6.5rem]">
+                    {cert.stepNumber}
+                  </span>
+                </div>
+              </div>
+              <div class="pl-2">
+                <h3 class="mb-3 flex items-center gap-3 text-xl font-bold text-black lg:text-2xl">
+                  <span class="text-black/80" set:html={cert.icon} />
+                  {cert.title}
+                </h3>
+                <p class="text-sm leading-relaxed text-gray-600 lg:text-[15px]">
+                  {cert.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    packaging && (
+      <section class="w-full max-w-350 px-6 md:px-12 lg:px-20">
+        <div
+          class="mb-12 border-b border-gray-200 pb-12 lg:mb-16 lg:pb-16"
+          data-aos="fade-up">
+          <h2 class="mb-8 text-3xl font-bold text-gray-900 md:text-4xl">
+            {packaging.title}
+          </h2>
+          <div class="flex flex-col gap-6 text-base leading-relaxed text-gray-600 md:text-lg">
+            <p>{packaging.intro1}</p>
+            <p>{packaging.intro2}</p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-12 lg:flex-row lg:items-stretch lg:gap-16">
+          <div class="flex w-full flex-col justify-center lg:w-1/2">
+            {packaging.list &&
+              packaging.list.map((item: any, index: number) => (
+                <div
+                  class="flex items-start gap-6 border-b border-gray-200 py-8 first:pt-0 last:border-0"
+                  data-aos="fade-right"
+                  data-aos-delay={index * 100}>
+                  <div class="shrink-0 pt-1">
+                    <span class="text-3xl font-bold text-gray-900 md:text-4xl">
+                      {item.number}
+                    </span>
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <h3 class="text-xl font-bold text-gray-900 lg:text-2xl">
+                      {item.title}
+                    </h3>
+                    <p class="text-sm leading-relaxed text-gray-500 md:text-base">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+          </div>
+          <div
+            class="relative min-h-100 w-full lg:min-h-full lg:w-1/2"
+            data-aos="fade-left">
+            <div class="absolute inset-0 h-full w-full overflow-hidden shadow-2xl">
+              {packaging.image && (
+                <OptimizedImage
+                  src={packaging.image}
+                  alt="Fulfillment Services"
+                  class="h-full w-full object-cover"
+                  width={800}
+                  height={1000}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</div>
+
+<style>
+  h2,
+  h3,
+  p,
+  a,
+  span {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import Button from "@/components/Button.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "rubber-plastic-features",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, subtitle, description, button, featuresList } = sectionData.data;
+const premiumGradients = [
+  "bg-gradient-to-br from-[#2b5852] to-[#4a8a7a]",
+  "bg-gradient-to-br from-[#1a2542] to-[#b37d74]",
+  "bg-gradient-to-br from-[#1e3c5a] to-[#5b8c9c]",
+];
+---
+
+<section class="w-full bg-white py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 md:px-12 lg:px-20">
+    <div class="flex flex-col gap-16 lg:flex-row lg:items-center lg:gap-20">
+      <div class="flex flex-col gap-8 lg:w-7/12" data-aos="fade-right">
+        {
+          featuresList &&
+            featuresList.map((item: any, index: number) => {
+              const bgGradient =
+                premiumGradients[index % premiumGradients.length];
+              return (
+                <div
+                  class={`group relative flex flex-col overflow-hidden rounded-4xl border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] md:flex-row ${bgGradient}`}
+                  data-aos-delay={index * 150}>
+                  <div class="relative z-10 flex flex-col justify-center p-8 md:w-1/2 lg:p-12">
+                    <h3 class="mb-4 text-2xl font-black tracking-tight text-white transition-colors duration-300">
+                      {item.title}
+                    </h3>
+                    <p class="text-[15px] leading-relaxed font-medium text-white/80">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  <div class="relative min-h-62.5 overflow-hidden md:min-h-full md:w-1/2">
+                    {item.image && (
+                      <OptimizedImage
+                        src={item.image}
+                        alt={item.title}
+                        width={600}
+                        height={400}
+                        class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-100"
+                      />
+                    )}
+                    <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                    {item.bottomLabel && (
+                      <div class="absolute right-6 bottom-6 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                        <span class="rounded-lg border border-white/20 bg-black/40 px-4 py-2 text-xs font-black tracking-widest text-white uppercase shadow-lg backdrop-blur-md">
+                          {item.bottomLabel}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+        }
+      </div>
+
+      <div
+        class="flex flex-col items-start text-left lg:w-5/12"
+        data-aos="fade-left">
+        {
+          subtitle && (
+            <div class="mb-6">
+              <span class="inline-block rounded-full border border-blue-600/20 bg-blue-50 px-4 py-1.5 text-xs font-bold tracking-[0.2em] text-blue-600 uppercase">
+                {subtitle}
+              </span>
+            </div>
+          )
+        }
+
+        <h2
+          class="mb-8 text-4xl leading-[1.1] font-black tracking-tighter text-gray-900 md:text-5xl lg:text-[56px]">
+          {title}
+        </h2>
+
+        {
+          description && (
+            <p class="mb-10 max-w-md border-l-2 border-blue-600/30 py-1 pl-5 text-lg leading-relaxed font-medium text-gray-500">
+              {description}
+            </p>
+          )
+        }
+
+        <div class="mb-12 flex flex-wrap justify-start gap-4">
+          <div
+            class="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2">
+            <i class="fa-solid fa-certificate text-blue-600"></i>
+            <span class="text-xs font-bold text-gray-700">ISO 9001</span>
+          </div>
+          <div
+            class="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2">
+            <i class="fa-solid fa-shield-halved text-blue-600"></i>
+            <span class="text-xs font-bold text-gray-700">ASTM Compliant</span>
+          </div>
+          <div
+            class="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2">
+            <i class="fa-solid fa-fire text-blue-600"></i>
+            <span class="text-xs font-bold text-gray-700">Class B1</span>
+          </div>
+        </div>
+
+        {
+          button && button.enable && (
+            <div class="mt-2">
+              <Button
+                {...button}
+                class="inline-flex border-none bg-blue-600 px-10 py-4 text-white shadow-xl shadow-blue-600/20 transition-all hover:-translate-y-1 hover:bg-blue-700"
+              />
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

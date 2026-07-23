@@ -1,0 +1,131 @@
+---
+import config from ".astro/config.generated.json";
+import type { z } from "astro/zod";
+import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { ourServicesSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Icons from "@/helpers/Icons.astro";
+import Button from "../Button.astro";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import ServiceCard from "@/components/cards/ServiceCard.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import VerticalLabel from "@/components/widgets/VerticalLabel.astro";
+
+type SectionType = z.infer<typeof ourServicesSectionSchema>;
+type Props = {
+  content?: SectionType;
+};
+
+let defaultContent = (
+  await getEntryCTM("sections", "our-services", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  image,
+  imageAlt,
+  footerText,
+  footerLink,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+let servicesList = await getCollectionCTM(
+  config.settings.servicesFolder as any,
+  Astro.currentLocale,
+);
+
+if (servicesList) {
+  servicesList = servicesList.filter((item: any) => !item.data.draft);
+}
+---
+
+<section class="overflow-hidden">
+  <div class="container">
+    <div class="has-vertical-text-left relative">
+      {
+        badge && (
+          <VerticalLabel
+            text={badge}
+            scrambleDelay={400}
+            class="top-1/2 left-0 -translate-y-1/2 text-center"
+          />
+        )
+      }
+
+      <div class="flex flex-col items-start gap-10 lg:flex-row lg:gap-25">
+        <div>
+          {
+            badge && (
+              <div
+                class="mb-5 flex items-center gap-3 font-semibold uppercase"
+                data-aos="fade-up-sm"
+                data-aos-duration="600">
+                <Icons icon="Diamond" fill={"#000000"} />
+                {badge}
+              </div>
+            )
+          }
+          {title && <SectionTitle title={title} />}
+        </div>
+
+        {
+          image && (
+            <div
+              class="w-full shrink-0 overflow-hidden lg:w-90 xl:w-106"
+              data-aos="fade-left-sm"
+              data-aos-duration="800"
+              data-aos-delay="100">
+              <OptimizedImage
+                src={image}
+                alt={imageAlt || "Our services"}
+                width={424}
+                height={200}
+                class="size-full object-cover"
+              />
+            </div>
+          )
+        }
+      </div>
+
+      {
+        servicesList && servicesList.length > 0 && (
+          <div class="divide-border-dark/15 border-border-dark/15 group/list mt-15 mb-13 divide-y border-y md:mt-20 xl:mt-27.5">
+            {servicesList.map((service: any, index: number) => (
+              <ServiceCard content={service} index={index} />
+            ))}
+          </div>
+        )
+      }
+
+      {
+        (footerText || footerLink) && (
+          <div
+            class="text-center text-lg font-medium"
+            data-aos="fade-up-sm"
+            data-aos-duration="600"
+            data-aos-delay="200">
+            {footerText && <span>{footerText} </span>}
+            {footerLink && (
+              <Button
+                tag="a"
+                variant="text"
+                url={getLocaleUrlCTM(footerLink.url, Astro.currentLocale)}
+                label={footerLink.label}
+                class="overflow-visible! font-semibold underline underline-offset-2 hover:no-underline"
+              />
+            )}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

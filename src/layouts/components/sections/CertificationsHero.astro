@@ -1,0 +1,77 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "certifications-hero",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { subtitle, title, description, bgImage, badges } = sectionData.data;
+---
+
+<section
+  class="relative overflow-hidden bg-white pt-32 pb-24 lg:pt-40 lg:pb-32">
+  <div class="container mx-auto px-6 md:px-12 lg:px-20">
+    <div class="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
+      <div class="relative z-10 max-w-2xl" data-aos="fade-right">
+        <div class="mb-6 flex">
+          <span
+            class="inline-block rounded-full bg-gray-100 px-4 py-1.5 text-sm font-semibold tracking-wider text-gray-600 uppercase">
+            {subtitle}
+          </span>
+        </div>
+
+        <h1
+          class="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
+          {title}
+        </h1>
+
+        <p class="mb-10 text-lg leading-relaxed text-gray-600 md:text-xl">
+          {description}
+        </p>
+
+        {
+          badges && badges.length > 0 && (
+            <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+              {badges.map((badge: any) => (
+                <div class="flex items-center gap-3 border-l-2 border-blue-500 pl-4">
+                  <span class="text-blue-600" set:html={badge.icon} />
+                  <span class="text-sm font-bold text-gray-800">
+                    {badge.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <div
+        class="relative z-10 w-full lg:w-[110%]"
+        data-aos="fade-left"
+        data-aos-delay="200">
+        {
+          bgImage ? (
+            <div class="overflow-hidden rounded-3xl shadow-2xl">
+              <OptimizedImage
+                src={bgImage}
+                alt="Certifications Visual"
+                class="h-full w-full object-cover"
+                width={800}
+                height={600}
+              />
+            </div>
+          ) : (
+            <div class="flex aspect-4/3 w-full items-center justify-center rounded-3xl border border-gray-100 bg-gray-50">
+              <span class="text-gray-400">Visual Placeholder</span>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

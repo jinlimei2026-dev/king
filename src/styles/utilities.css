@@ -1,0 +1,64 @@
+@utility box-shadow-black {
+  @apply shadow-black/5;
+  box-shadow: 0px 0px 80px var(--tw-shadow-color);
+}
+
+@utility translate-centered {
+  @apply top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+}
+
+@utility translate-y-centered {
+  @apply top-1/2 -translate-y-1/2;
+}
+
+@utility translate-x-centered {
+  @apply left-1/2 -translate-x-1/2;
+}
+
+@utility stretched-link {
+  @apply relative before:absolute before:inset-0;
+}
+
+@utility container-2xl {
+  @apply max-w-400;
+}
+
+@utility h1 {
+  @apply text-h1;
+}
+
+@utility h2 {
+  @apply text-h2;
+}
+
+@utility h3 {
+  @apply text-h3;
+}
+
+@utility h4 {
+  @apply text-h4;
+}
+
+@utility h5 {
+  @apply text-h5;
+}
+
+@utility h6 {
+  @apply text-h6;
+}
+
+@utility section-spacing {
+  @apply pt-15 md:pt-16.5 lg:pt-20 xl:pt-25;
+}
+@utility section-spacing-vertical {
+  @apply py-15 md:py-16.5 lg:py-20 xl:py-25;
+}
+
+@utility bb-dd {
+  @apply border-primary border-2 border-dashed;
+}
+@utility bb {
+  * {
+    @apply border-primary border border-dashed;
+  }
+}

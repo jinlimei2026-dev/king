@@ -1,0 +1,96 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "shipping-hero",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const {
+  backgroundImage,
+  subtitle,
+  title,
+  description,
+  buttonLabel,
+  buttonUrl,
+  statsCard,
+} = sectionData.data;
+---
+
+<section
+  class="relative flex min-h-[80vh] w-full items-center overflow-hidden py-24 md:py-32">
+  <div class="absolute inset-0 z-0">
+    <OptimizedImage
+      src={backgroundImage.src}
+      alt={backgroundImage.alt}
+      class="h-full w-full object-cover"
+      width={1920}
+      height={1080}
+    />
+    <div class="absolute inset-0 bg-[#0f172a]/60"></div>
+    <div
+      class="absolute inset-0 w-full bg-linear-to-r from-[#0f172a]/90 via-[#0f172a]/50 to-transparent md:w-3/4">
+    </div>
+  </div>
+
+  <div class="relative z-10 mx-auto w-full max-w-375 px-6 lg:px-20">
+    <div
+      class="mt-12 flex flex-col items-start justify-between gap-16 lg:flex-row lg:items-end lg:gap-8">
+      <div class="w-full lg:w-3/5" data-aos="fade-up">
+        <div class="mb-6 flex items-center gap-4">
+          <div class="h-0.5 w-12 bg-[#2563eb]"></div>
+          <span
+            class="text-sm font-bold tracking-[0.15em] text-[#3b82f6] uppercase">
+            {subtitle}
+          </span>
+        </div>
+
+        <h1
+          class="mb-6 text-5xl leading-[1.05] font-bold tracking-tight text-white md:text-6xl lg:text-[72px]">
+          {title}
+        </h1>
+        <p class="mb-10 max-w-xl text-lg leading-relaxed text-white/80">
+          {description}
+        </p>
+
+        <div class="flex flex-wrap items-center gap-6 md:gap-8">
+          <a
+            href={buttonUrl}
+            class="group inline-flex items-center gap-3 rounded-full bg-[#2563eb] px-8 py-4 font-bold text-white transition-all duration-300 hover:bg-[#1d4ed8]">
+            {buttonLabel}
+            <span
+              class="transition-transform duration-300 group-hover:translate-x-1">
+              <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="flex w-full lg:w-2/5 lg:justify-end"
+        data-aos="fade-left"
+        data-aos-delay="200">
+        <div
+          class="w-full max-w-sm rounded-2xl border border-white/10 bg-[#1e293b]/70 p-8 shadow-2xl backdrop-blur-xl md:p-10">
+          <h3
+            class="mb-10 text-2xl leading-snug font-bold text-white md:text-[28px]">
+            {statsCard.title}
+          </h3>
+          <a
+            href={statsCard.linkUrl}
+            class="group inline-flex items-center gap-2 font-semibold text-[#3b82f6] transition-colors hover:text-[#60a5fa]">
+            {statsCard.linkLabel}
+            <span
+              class="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
+              <i class="fa-solid fa-arrow-up-right"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

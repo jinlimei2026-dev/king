@@ -1,0 +1,45 @@
+---
+enable: true
+subtitle: "OPERATIONAL EXCELLENCE \\"
+title: "Precision Engineering. Global Scale."
+description: "We don't just supply insulation; we integrate into your supply chain. Backed by modern manufacturing scale and first-class automated production lines, we set the benchmark for global elastomeric pipe distribution."
+production:
+  title: "Advanced Automated Extrusion & Foaming"
+  description: "Our facility utilizes an advanced automated production line, processing premium nitrile butadiene rubber (NBR) and PVC through specialized mixing and vulcanization foaming techniques. This is a closed-loop system featuring precise ingredient weighing, strict intermediate process controls, and rigorous final product inspections to ensure every millimeter exceeds international standards."
+  processDetails:
+    - title: "Specialized Vulcanization"
+      text: "Advanced foaming techniques ensure a uniform, closed-cell bubble distribution to prevent thermal bridging."
+    - title: "Strict Quality Control"
+      text: "Rigorous intermediate process controls and final product inspections guarantee consistent high performance."
+  buttonLabel: "View More Our Factory"
+  buttonUrl: "/about/"
+  image: "images/products/Rubber Plastic production 7.png"
+certifications:
+  - stepNumber: "01"
+    title: "ISO 9001 Certified"
+    description: "Our production operates under a strict ISO 9001:2008 Quality Management System, verifying consistent global manufacturing excellence."
+    image: "/images/products/Rubber Plastic certificate 1.png"
+  - stepNumber: "02"
+    title: "Industry Association Member"
+    description: "Proud member of the China Insulation & Energy Efficiency Materials Association, continuously driving advanced industry standards."
+    image: "/images/products/Rubber Plastic certificate 2.png"
+  - stepNumber: "03"
+    title: "Green & Eco-Friendly"
+    description: "Completely green and environmentally friendly from production to installation, meeting strict national environmental protection requirements without hazardous emissions."
+    image: "/images/products/Rubber Plastic certificate 3.png"
+packaging:
+  title: "Optimized Logistics & OEM Services"
+  intro1: "We treat logistics and retail readiness as a core product feature. Leveraging our comprehensive supply system, we minimize your Total Cost of Ownership (TCO) through optimized volume management and reliable delivery."
+  intro2: "From space-saving packaging to custom OEM branding, our end-to-end service ensures your rubber plastic insulation arrives intact and ready for the market."
+  image: "/images/products/Rubber Plastic shipping.png"
+  list:
+    - number: "01."
+      title: "Volume-Optimized Packaging"
+      description: "Advanced packaging solutions efficiently compress and protect rolls, significantly reducing international maritime freight costs and maximizing your local warehouse efficiency."
+    - number: "02."
+      title: "Customized Retail Branding"
+      description: "Full OEM/ODM support available. We can customize board/pipe colors and sizes based on user requirements, along with private label printing to enhance your shelf presence."
+    - number: "03."
+      title: "Reliable Global Distribution"
+      description: "Supported by our robust production capacity and streamlined order processing, we guarantee fast-track, trackable shipping to major global HVAC/R markets."
+---

@@ -1,0 +1,59 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "about-cta",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { subtitle, title, description, buttonLabel, buttonUrl } =
+  sectionData.data;
+---
+
+<section class="w-full overflow-hidden bg-[#5f6a5e] py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div
+      class="flex flex-col items-center justify-between gap-16 lg:flex-row lg:gap-8">
+      <div class="w-full text-white lg:w-2/3" data-aos="fade-right">
+        <div class="mb-8 flex items-center gap-4">
+          <span
+            class="text-sm font-bold tracking-widest text-white/90 uppercase">
+            {subtitle}
+          </span>
+          <div class="h-px w-24 bg-white/30 md:w-48"></div>
+        </div>
+
+        <h2
+          class="mb-6 max-w-2xl text-4xl leading-[1.15] font-medium tracking-tight text-white md:text-5xl lg:text-[56px]">
+          {title}
+        </h2>
+
+        <p class="max-w-xl text-lg leading-relaxed font-light text-white/80">
+          {description}
+        </p>
+      </div>
+
+      <div
+        class="flex w-full justify-center lg:w-1/3 lg:justify-end"
+        data-aos="fade-left"
+        data-aos-delay="100">
+        <a
+          href={buttonUrl}
+          class="group relative flex h-48 w-48 items-center justify-center rounded-full bg-white text-2xl font-medium text-[#5f6a5e] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] md:h-56 md:w-56">
+          <span
+            class="relative z-10 transition-transform duration-500 group-hover:-translate-y-1">
+            {buttonLabel}
+          </span>
+
+          <span
+            class="absolute mt-8 translate-y-4 text-sm opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

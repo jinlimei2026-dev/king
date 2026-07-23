@@ -1,0 +1,73 @@
+---
+import type { NavigationLink } from "@/types";
+import NavDropdownMenu from "@/layouts/components/global/header/DropdownMenu.astro";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import { isActiveUrl } from "@/lib/utils/navigationActive";
+
+const menu = Astro.props.menu as NavigationLink;
+const { pathname, hostname } = Astro.url;
+---
+
+{
+  (menu.hasChildren || menu.hasMegaMenu) && menu.name ? (
+    <NavDropdownMenu menu={menu} />
+  ) : (
+    menu.name && (
+      <li class="nav-item" role="none">
+        <a
+          {...{
+            rel: menu.url?.startsWith("http")
+              ? menu.rel || "noopener noreferrer"
+              : menu.rel || undefined,
+            target: menu.url?.startsWith("http")
+              ? menu.target || "_blank"
+              : menu.target || undefined,
+          }}
+          role="menuitem"
+          aria-label={menu.name}
+          href={getLocaleUrlCTM(
+            menu.url || Astro.url.origin,
+            Astro.currentLocale,
+          )}
+          class:list={[
+            "nav-link",
+            {
+              active: isActiveUrl(
+                menu.url,
+                pathname,
+                Astro.currentLocale,
+                hostname,
+              ),
+            },
+          ]}>
+          {menu.badge && menu.badge.enable ? (
+            menu.badge.type === "dot" ? (
+              <span class="relative inline-block">
+                {menu.name}
+                <sup
+                  class:list={[
+                    "badge badge-dot",
+                    menu.badge.color && `badge-${menu.badge.color}`,
+                  ]}
+                />
+              </span>
+            ) : (
+              <>
+                {menu.name}
+                <span
+                  class:list={[
+                    "badge",
+                    menu.badge.color && `badge-${menu.badge.color}`,
+                  ]}>
+                  {menu.badge.label}
+                </span>
+              </>
+            )
+          ) : (
+            menu.name
+          )}
+        </a>
+      </li>
+    )
+  )
+}

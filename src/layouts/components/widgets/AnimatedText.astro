@@ -1,0 +1,145 @@
+---
+import type { HTMLTag } from "astro/types";
+
+type Props = {
+  class?: string;
+  content: string | Promise<string>;
+  duration?: number;
+  delay?: number;
+  tag?: HTMLTag;
+  stagger?: number;
+};
+
+let {
+  content,
+  tag: Element = "div",
+  duration = 0.6,
+  delay = 0,
+  stagger = 0.1,
+  ...rest
+} = Astro.props;
+
+let processedContent = "";
+if (content) {
+  // @ts-expect-error
+  const parts = content.split(/(<[^>]+>)/g);
+
+  processedContent = parts
+    .map((part: string) => {
+      if (part.startsWith("<") && part.endsWith(">")) {
+        return part;
+      }
+
+      if (part.trim()) {
+        return part
+          .split(/(\s+)/)
+          .map((segment: string) => {
+            if (/^\s+$/.test(segment)) {
+              return segment;
+            }
+            if (segment.trim()) {
+              return `<span class="word" style="display: inline-block; transform: translateY(10px); opacity: 0; filter: blur(10px);">${segment}</span>`;
+            }
+            return segment;
+          })
+          .join("");
+      }
+
+      return part;
+    })
+    .join("");
+}
+---
+
+<Element
+  class:list={["animated-text", Astro.props.class]}
+  set:html={processedContent}
+  data-duration={duration}
+  data-delay={delay}
+  data-stagger={stagger}
+  {...rest}
+/>
+
+<script>
+  const animatedTexts = document.querySelectorAll(".animated-text");
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (prefersReducedMotion) {
+    animatedTexts.forEach((animatedText) => {
+      animatedText.querySelectorAll(".word").forEach((word) => {
+        if (!(word instanceof HTMLElement)) return;
+        word.style.opacity = "1";
+        word.style.transform = "none";
+        word.style.filter = "none";
+      });
+    });
+  } else if (animatedTexts.length) {
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const animatedText = entry.target;
+          if (
+            !(animatedText instanceof HTMLElement) ||
+            animatedText.dataset.animated === "true"
+          ) {
+            currentObserver.unobserve(animatedText);
+            return;
+          }
+
+          animatedText.dataset.animated = "true";
+          const duration = parseFloat(
+            animatedText.getAttribute("data-duration") || "0.6",
+          );
+          const delay = parseFloat(
+            animatedText.getAttribute("data-delay") || "0",
+          );
+          const dataStagger = parseFloat(
+            animatedText.getAttribute("data-stagger") || "0.1",
+          );
+
+          animatedText.querySelectorAll(".word").forEach((word, index) => {
+            if (!(word instanceof HTMLElement)) return;
+            word.style.willChange = "opacity, transform, filter";
+
+            const animation = word.animate(
+              [
+                {
+                  opacity: 0,
+                  transform: "translateY(10px)",
+                  filter: "blur(10px)",
+                },
+                {
+                  opacity: 1,
+                  transform: "translateY(0px)",
+                  filter: "blur(0px)",
+                },
+              ],
+              {
+                duration: duration * 1000,
+                delay: (delay + index * dataStagger) * 1000,
+                easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+                fill: "forwards",
+              },
+            );
+
+            animation.onfinish = () => {
+              word.style.opacity = "1";
+              word.style.transform = "none";
+              word.style.filter = "none";
+              word.style.willChange = "auto";
+            };
+          });
+
+          currentObserver.unobserve(animatedText);
+        });
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" },
+    );
+
+    animatedTexts.forEach((animatedText) => observer.observe(animatedText));
+  }
+</script>

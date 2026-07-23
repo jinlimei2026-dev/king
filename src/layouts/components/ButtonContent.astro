@@ -1,0 +1,125 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import type { IconName as SupportedIconName } from "../../lib/iconNames.ts";
+import type { sharedButtonTag } from "@/sections.schema";
+import type { z } from "astro/zod";
+
+interface Props extends z.infer<typeof sharedButtonTag> {}
+
+const {
+  label,
+  variant,
+  icon,
+  title,
+  isCreativeHoverEffect,
+  isTextFlipHoverEffect,
+  isMagneticTextFlipHoverEffect,
+} = Astro.props;
+
+let dataContent;
+if (isTextFlipHoverEffect || isMagneticTextFlipHoverEffect) {
+  dataContent = variant !== "text" ? label : undefined;
+}
+
+let addAriaLabel = false;
+if (
+  label?.toLowerCase().includes("learn more") ||
+  label?.toLowerCase().includes("read more")
+) {
+  addAriaLabel = true;
+}
+
+const iconLeft =
+  icon?.enable && icon?.position === "left" && variant !== "text";
+const iconRight =
+  icon?.enable && icon?.position === "right" && variant !== "text";
+---
+
+{
+  iconLeft && !iconRight && (
+    <span
+      class={`icons-wrapper -mb-px inline-flex min-h-4 min-w-4 items-center justify-center ${icon?.className || ""}`}>
+      <span class="icon icon-before flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className || ""}`}
+          icon={icon.name as SupportedIconName}
+        />
+      </span>
+      <span class="icon icon-after flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className || ""}`}
+          icon={icon.name as SupportedIconName}
+        />
+      </span>
+    </span>
+  )
+}
+
+{
+  variant === "text" && icon?.enable ? (
+    <span
+      class:list={[
+        "icons-wrapper -mb-px inline-flex min-h-[.9em] min-w-[1em] items-center justify-center",
+        { "": label },
+        icon?.className || "",
+      ]}>
+      <span class="icon icon-before flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className}`}
+          icon={(icon.name as SupportedIconName) || "ArrowUpRight"}
+        />
+      </span>
+      <span class="icon icon-after flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className}`}
+          icon={(icon.name as SupportedIconName) || "ArrowUpRight"}
+        />
+      </span>
+    </span>
+  ) : isCreativeHoverEffect ? (
+    <span class="hover-bg" />
+  ) : null
+}
+
+{
+  (isTextFlipHoverEffect || isMagneticTextFlipHoverEffect) &&
+  variant !== "text" ? (
+    <>
+      {label && (
+        <>
+          <span
+            class="text-flip-inner"
+            set:html={label}
+            data-content={dataContent}
+          />
+          {addAriaLabel && <span class="sr-only" set:html={title} />}
+        </>
+      )}
+    </>
+  ) : (
+    <>
+      <Fragment set:html={label} />
+      {addAriaLabel && <span class="sr-only" set:html={title} />}
+    </>
+  )
+}
+
+{
+  !iconLeft && iconRight && (
+    <span
+      class={`icons-wrapper -mb-px inline-flex min-h-4 min-w-4 items-center justify-center ${icon?.className}`}>
+      <span class="icon icon-before flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className}`}
+          icon={icon.name as SupportedIconName}
+        />
+      </span>
+      <span class="icon icon-after flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.className}`}
+          icon={icon.name as SupportedIconName}
+        />
+      </span>
+    </span>
+  )
+}

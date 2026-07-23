@@ -1,0 +1,81 @@
+---
+const clients = [
+  { src: "/images/partners/Shire_BS_Logo.avif", alt: "kingsenda" },
+  { src: "/images/partners/cropped-Group-156.png", alt: "kingsenda" },
+  { src: "/images/partners/NOVO_LOGO_ProjSul-1024x1024.png", alt: "kingsenda" },
+  { src: "/images/partners/globalspec-logo-blue.svg", alt: "kingsenda" },
+  {
+    src: "/images/partners/ScreenShot_2026-05-15_203732_748.png",
+    alt: "kingsenda",
+  },
+  { src: "/images/partners/alyamitech-logo-500-3.jpg", alt: "kingsenda" },
+  { src: "/images/partners/modinest_logo.png", alt: "kingsenda" },
+];
+---
+
+<section
+  class="relative mb-16 overflow-hidden bg-blue-700 py-12 md:mb-24 md:py-16">
+  <div class="container mb-8 text-center">
+    <p class="text-sm font-bold tracking-widest text-white uppercase">
+      Trusted by Industry Leaders Worldwide
+    </p>
+  </div>
+
+  <div class="marquee-wrapper relative flex w-full overflow-hidden">
+    <div
+      class="pointer-events-none absolute top-0 left-0 z-10 h-full w-16 bg-linear-to-r from-blue-700 to-transparent md:w-32">
+    </div>
+    <div
+      class="pointer-events-none absolute top-0 right-0 z-10 h-full w-16 bg-linear-to-l from-blue-700 to-transparent md:w-32">
+    </div>
+
+    <div class="marquee-content flex shrink-0 gap-6 px-3 md:gap-8 md:px-4">
+      {
+        clients.map((client) => (
+          <div class="flex h-20 w-48 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white px-6 shadow-md transition-transform hover:scale-105 md:h-24 md:w-56">
+            <img
+              src={client.src}
+              alt={client.alt}
+              class="max-h-10 w-auto object-contain md:max-h-12"
+            />
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="marquee-content flex shrink-0 gap-6 px-3 md:gap-8 md:px-4"
+      aria-hidden="true">
+      {
+        clients.map((client) => (
+          <div class="flex h-20 w-48 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white px-6 shadow-md transition-transform hover:scale-105 md:h-24 md:w-56">
+            <img
+              src={client.src}
+              alt={client.alt}
+              class="max-h-10 w-auto object-contain md:max-h-12"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee-content {
+    animation: scroll 30s linear infinite;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .marquee-wrapper:hover .marquee-content {
+    animation-play-state: paused;
+  }
+</style>

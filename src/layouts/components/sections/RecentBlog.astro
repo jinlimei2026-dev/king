@@ -1,0 +1,118 @@
+---
+import { getCollection } from "astro:content";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+
+const allPosts = await getCollection("blog");
+const recentPosts = allPosts
+  .filter((post) => post.data.draft !== true)
+  .sort((a, b) => {
+    const dateA = a.data.date ? new Date(a.data.date).valueOf() : 0;
+    const dateB = b.data.date ? new Date(b.data.date).valueOf() : 0;
+    return dateB - dateA;
+  })
+  .slice(0, 3);
+
+if (recentPosts.length === 0) return;
+---
+
+<section class="mt-16 bg-gray-200 py-20 md:mt-24 md:py-32">
+  <div class="container">
+    <div class="mx-auto mb-16 max-w-3xl text-center" data-aos="fade-up">
+      <h2
+        class="text-dark text-3xl leading-tight font-bold tracking-tight md:text-4xl lg:text-[42px]">
+        The expert blog is professional growth and mentorship as well as news
+        updates
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12">
+      <div
+        class="hidden items-center justify-center select-none lg:col-span-2 lg:flex"
+        data-aos="fade-right">
+        <span
+          class="text-dark/5 vertical-text block rotate-180 text-[90px] font-bold tracking-widest whitespace-nowrap uppercase xl:text-[110px]">
+          Recent Blog
+        </span>
+      </div>
+
+      <div class="border-dark/10 flex flex-col border-t lg:col-span-10">
+        {
+          recentPosts.map((post) => {
+            const formattedDate = post.data.date
+              ? new Date(post.data.date).toLocaleDateString("en-US", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "";
+
+            return (
+              <a
+                href={`/blog/${post.id}`}
+                class="group border-dark/10 hover:bg-dark/5 grid grid-cols-1 items-center gap-6 border-b py-8 transition-all duration-300 md:grid-cols-12"
+                data-aos="fade-up">
+                <div class="flex flex-col justify-center md:col-span-5">
+                  <div class="text-dark/40 mb-3 flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+                    <span>{post.data.category || "Business"}</span>
+                    <span>&bull;</span>
+                    <span>{formattedDate}</span>
+                  </div>
+                  <h3 class="text-dark group-hover:text-primary text-xl leading-snug font-bold tracking-tight transition-colors duration-300 md:text-2xl">
+                    {post.data.title}
+                  </h3>
+                  {post.data.description && (
+                    <p class="text-dark/60 mt-3 line-clamp-2 text-sm leading-relaxed">
+                      {post.data.description}
+                    </p>
+                  )}
+                </div>
+
+                <div class="md:col-span-4">
+                  <div class="bg-dark/5 relative aspect-16/10 w-full overflow-hidden rounded-xl shadow-sm">
+                    {post.data.image && (
+                      <OptimizedImage
+                        src={post.data.image}
+                        alt={post.data.title}
+                        width={480}
+                        height={300}
+                        class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-6 md:col-span-3 md:justify-end">
+                  <span class="text-dark/70 text-sm font-medium whitespace-nowrap">
+                    {post.data.readingTime || "3 min read"}
+                  </span>
+                  <div class="bg-dark group-hover:bg-primary flex size-12 items-center justify-center rounded-full text-white transition-all duration-500 group-hover:scale-110">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="transition-transform duration-500 group-hover:rotate-45">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vertical-text {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+  }
+</style>

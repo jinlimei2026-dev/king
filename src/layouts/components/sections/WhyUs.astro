@@ -1,0 +1,104 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const entry = await getEntryCTM("sections", "why-us", Astro.currentLocale);
+const content = entry?.data;
+
+if (!content || !content.enable) return;
+
+const { badge, title, description, image, circleText } = content;
+---
+
+<section class="overflow-hidden bg-white pt-20 md:pt-32">
+  <div class="container mb-16 md:mb-24">
+    <div
+      class="relative grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
+      <div
+        class="relative z-10 flex flex-col lg:col-span-7"
+        data-aos="fade-right">
+        {badge && <SectionBadge title={badge} />}
+
+        <h2
+          class="text-dark mt-6 text-4xl leading-[1.1] font-bold tracking-tight md:text-6xl lg:text-[72px]">
+          {title}
+        </h2>
+
+        <div
+          class="border-dark/20 relative mt-12 hidden w-[80%] border-b md:block">
+          <div
+            class="bg-dark/20 absolute -right-2 -bottom-1.25 h-2.5 w-2.5 rounded-full">
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="relative z-10 flex flex-col items-start lg:col-span-5 lg:items-end lg:pt-4"
+        data-aos="fade-left"
+        data-aos-delay="200">
+        <div
+          class="relative mb-10 flex size-32 items-center justify-center md:size-40 lg:mr-8 lg:mb-16">
+          <svg
+            class="text-dark absolute inset-0 h-full w-full animate-[spin_15s_linear_infinite]"
+            viewBox="0 0 100 100">
+            <path
+              id="circleTextPath"
+              d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+              fill="none">
+            </path>
+            <text
+              font-size="10.5"
+              font-weight="bold"
+              fill="currentColor"
+              letter-spacing="1.5">
+              <textPath href="#circleTextPath" startOffset="0%">
+                {circleText}
+              </textPath>
+            </text>
+          </svg>
+          <div
+            class="flex items-center justify-center text-[#2563EB] transition-transform duration-500 hover:scale-110">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="36"
+              height="36"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+              </path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="w-full lg:max-w-[85%]">
+          <p
+            class="text-text-default/70 text-left text-base leading-relaxed md:text-lg"
+            set:html={markdownify(description)}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  {
+    image && (
+      <div class="w-full" data-aos="fade-up" data-aos-duration="1000">
+        <div class="bg-dark/5 relative aspect-video w-full overflow-hidden md:aspect-21/9">
+          <OptimizedImage
+            src={image}
+            alt="Why choose us overview"
+            width={1920}
+            height={820}
+            class="h-full w-full object-cover transition-transform duration-1000 hover:scale-105"
+          />
+        </div>
+      </div>
+    )
+  }
+</section>

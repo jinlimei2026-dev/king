@@ -1,0 +1,168 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+type TestimonialItem = {
+  quote: string;
+  author: string;
+  title: string;
+  image?: string;
+};
+
+type SectionType = Section & {
+  title?: string;
+  testimonials?: TestimonialItem[];
+};
+
+const entry = await getEntryCTM(
+  "sections",
+  "testimonials",
+  Astro.currentLocale,
+);
+const actualContent = entry?.data as SectionType;
+
+if (!actualContent || !actualContent.enable) return;
+
+const { title, testimonials } = actualContent;
+---
+
+<section class="relative overflow-hidden bg-[#2563EB] py-20 md:py-32">
+  <div class="container mb-16 text-center md:mb-24" data-aos="fade-up">
+    {
+      title && (
+        <h2 class="mx-auto max-w-4xl text-3xl leading-tight font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+          {title}
+        </h2>
+      )
+    }
+  </div>
+
+  <div class="relative container flex items-center justify-center">
+    <button
+      id="btn-prev"
+      aria-label="Previous testimonial"
+      class="absolute left-0 z-20 hidden size-14 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white hover:bg-white/10 md:flex">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+    </button>
+
+    <div
+      id="testimonial-track"
+      class="no-scrollbar flex w-full max-w-4xl snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-4 md:px-0">
+      {
+        testimonials &&
+          testimonials.map((item, index) => (
+            <div class="flex w-full shrink-0 snap-center flex-col gap-8 rounded-2xl bg-[#F4F4F1] p-8 shadow-2xl md:flex-row md:p-12 lg:gap-12 lg:p-16">
+              <div class="border-border-dark/10 flex shrink-0 flex-row items-center justify-between border-b pb-6 md:w-32 md:flex-col md:items-start md:justify-start md:border-r md:border-b-0 md:pr-8 md:pb-0 lg:w-40 lg:pr-10">
+                <span class="text-base font-bold tracking-widest text-black md:mb-12">
+                  00{index + 1}
+                </span>
+
+                <div class="flex flex-col items-end md:items-start">
+                  <div class="text-dark mb-2 text-4xl leading-none font-black tracking-tighter md:text-5xl lg:text-6xl">
+                    5.0
+                  </div>
+                  <div class="mb-2 flex gap-1 text-[#F59E0B]">
+                    {[1, 2, 3, 4, 5].map(() => (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="size-4 md:size-5 lg:size-6">
+                        <path
+                          fill-rule="evenodd"
+                          d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    ))}
+                  </div>
+                  <div class="text-[10px] font-bold tracking-widest text-gray-600 uppercase md:text-xs">
+                    Verified Client
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col justify-center">
+                <svg
+                  class="mb-6 size-10 text-[#2563EB] md:size-12"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
+                </svg>
+
+                <p class="text-dark mb-8 text-lg leading-relaxed font-medium md:text-xl">
+                  {item.quote}
+                </p>
+
+                <div>
+                  <p class="text-dark mb-1 text-xl font-bold">{item.author}</p>
+                  <p class="text-sm text-gray-600">{item.title}</p>
+                </div>
+              </div>
+            </div>
+          ))
+      }
+    </div>
+
+    <button
+      id="btn-next"
+      aria-label="Next testimonial"
+      class="absolute right-0 z-20 hidden size-14 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white hover:bg-white/10 md:flex">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6"></path>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("testimonial-track");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+
+    if (!track || !btnPrev || !btnNext) return;
+
+    btnNext.addEventListener("click", () => {
+      const cardWidth = track.clientWidth;
+      track.scrollBy({ left: cardWidth, behavior: "smooth" });
+    });
+
+    btnPrev.addEventListener("click", () => {
+      const cardWidth = track.clientWidth;
+      track.scrollBy({ left: -cardWidth, behavior: "smooth" });
+    });
+  });
+</script>

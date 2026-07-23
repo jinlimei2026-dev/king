@@ -1,0 +1,48 @@
+---
+import Base from "@/layouts/Base.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+import config from ".astro/config.generated.json";
+import WarrantyHero from "@/components/sections/WarrantyHero.astro";
+import WarrantyPolicy from "@/components/sections/WarrantyPolicy.astro";
+import WarrantySupport from "@/components/sections/WarrantySupport.astro";
+import WarrantyFlow from "@/components/sections/WarrantyFlow.astro";
+import WarrantyFaq from "@/components/sections/WarrantyFaq.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang: any) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      return {
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+        },
+        props: {
+          currentLang: lang.languageCode,
+        },
+      };
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { currentLang } = Astro.props;
+const pageData = {
+  title: "Certifications | A1 Fireproof",
+  description:
+    "Discover our industry certifications ensuring top quality manufacturing.",
+};
+---
+
+<Base {...pageData}>
+  {(<WarrantyHero />)}
+  {(<WarrantyPolicy />)}
+  {(<WarrantySupport />)}
+  {(<WarrantyFlow />)}
+  {(<WarrantyFaq />)}
+</Base>

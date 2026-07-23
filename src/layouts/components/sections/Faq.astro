@@ -1,0 +1,105 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import Button from "@/components/Button.astro";
+
+const entry = await getEntryCTM("sections", "faq", Astro.currentLocale);
+const content = entry?.data;
+
+if (!content || !content.enable) return;
+
+const { title, faqs, button } = content;
+const midIndex = Math.ceil((faqs?.length || 0) / 2);
+const leftFaqs = faqs?.slice(0, midIndex) || [];
+const rightFaqs = faqs?.slice(midIndex) || [];
+---
+
+<section class="bg-white py-20 md:py-32">
+  <div class="container mx-auto max-w-7xl">
+    <div
+      class="mx-auto mb-16 max-w-3xl text-center md:mb-24"
+      data-aos="fade-up">
+      <h2
+        class="text-dark text-4xl font-bold tracking-tight md:text-5xl lg:text-[52px]">
+        {title}
+      </h2>
+
+      {
+        button && button.enable && (
+          <div class="mt-8 flex justify-center">
+            <Button {...button} class="inline-flex px-8 py-3.5" />
+          </div>
+        )
+      }
+    </div>
+
+    <div
+      class="grid grid-cols-1 items-start gap-x-12 gap-y-6 lg:grid-cols-2 xl:gap-x-24">
+      <div class="flex flex-col gap-4">
+        {
+          leftFaqs.map((faq: any, index: number) => (
+            <details
+              class="group border-dark/10 border-b pb-6 [&_summary::-webkit-details-marker]:hidden"
+              data-aos="fade-up"
+              data-aos-delay={index * 50}>
+              <summary class="text-dark hover:text-primary flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold transition-colors outline-none">
+                <span class="leading-snug">{faq.question}</span>
+                <span class="border-dark/20 text-dark group-open:border-primary group-open:text-primary relative flex size-6 shrink-0 items-center justify-center rounded-full border transition-transform duration-300 group-open:rotate-45">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="size-4">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </span>
+              </summary>
+              <div class="text-dark/60 mt-4 pr-12 leading-relaxed">
+                <p set:html={markdownify(faq.answer)} />
+              </div>
+            </details>
+          ))
+        }
+      </div>
+
+      <div class="flex flex-col gap-4">
+        {
+          rightFaqs.map((faq: any, index: number) => (
+            <details
+              class="group border-dark/10 border-b pb-6 [&_summary::-webkit-details-marker]:hidden"
+              data-aos="fade-up"
+              data-aos-delay={(index + leftFaqs.length) * 50}>
+              <summary class="text-dark hover:text-primary flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold transition-colors outline-none">
+                <span class="leading-snug">{faq.question}</span>
+                <span class="border-dark/20 text-dark group-open:border-primary group-open:text-primary relative flex size-6 shrink-0 items-center justify-center rounded-full border transition-transform duration-300 group-open:rotate-45">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="size-4">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </span>
+              </summary>
+              <div class="text-dark/60 mt-4 pr-12 leading-relaxed">
+                <p set:html={markdownify(faq.answer)} />
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

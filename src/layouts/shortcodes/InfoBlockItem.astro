@@ -1,0 +1,25 @@
+---
+interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<li
+  class:list={[
+    "border-border-dark/15 text-text-default grid items-center border-b py-4 md:items-start lg:py-6 xl:py-7.5",
+    "gap-x-6 gap-y-1 md:gap-y-3 lg:gap-x-15 xl:gap-x-25",
+    "grid-cols-[auto_1fr]",
+    "xl:before:text-display-6 before:text-text-default before:text-3xl before:font-medium before:opacity-100 before:content-[counters(list-counter,'.')_'.'] lg:before:text-4xl",
+    "before:relative before:top-auto before:right-auto before:row-[span_2]",
+    "[&_p]:text-text-default/60 [&_p]:col-2 [&_p]:m-0 [&_p]:mt-0 [&_p]:text-sm lg:[&_p]:mt-2 lg:[&_p]:text-base lg:[&_p]:leading-relaxed",
+    className,
+  ]}>
+  <h5
+    class="md:text-h6-sm lg:text-h5-sm xl:text-h4-sm col-2 m-0 text-2xl font-semibold">
+    {title}
+  </h5>
+  <slot />
+</li>

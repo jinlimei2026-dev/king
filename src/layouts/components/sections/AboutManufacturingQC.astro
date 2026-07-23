@@ -1,0 +1,83 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "about-manufacturing-qc",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { heroImage, intro, processGrid } = sectionData.data;
+---
+
+<section class="w-full overflow-hidden bg-white pt-24 md:pt-32">
+  <div class="mb-20 w-full lg:mb-28" data-aos="fade-up">
+    <div class="h-100 w-full md:h-150 lg:h-187.5">
+      <OptimizedImage
+        src={heroImage.src}
+        alt={heroImage.alt}
+        class="h-full w-full object-cover"
+        width={1920}
+        height={800}
+      />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-375 px-6 pb-24 md:pb-32 lg:px-20">
+    <div class="mb-24 lg:mb-36" data-aos="fade-up">
+      <div class="mb-16 flex flex-col gap-12 lg:flex-row lg:gap-24">
+        <div class="lg:w-1/2">
+          <h2
+            class="text-4xl leading-[1.1] font-medium tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
+            {intro.title}
+          </h2>
+        </div>
+        <div class="flex items-end lg:w-1/2">
+          <p class="max-w-xl text-lg leading-relaxed text-gray-600">
+            {intro.description}
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {
+          intro.images.map((img: any) => (
+            <div class="aspect-4/3 overflow-hidden rounded-4xl shadow-sm">
+              <OptimizedImage
+                src={img.src}
+                alt={img.alt}
+                class="h-full w-full object-cover"
+                width={500}
+                height={375}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 gap-x-12 gap-y-20 md:grid-cols-2 lg:grid-cols-3"
+      data-aos="fade-up">
+      {
+        processGrid &&
+          processGrid.map((item: any) => (
+            <div class="flex flex-col border-t border-gray-100 pt-10">
+              <h4 class="mb-6 text-2xl font-medium tracking-tight text-gray-900">
+                {item.title}
+              </h4>
+              <p class="max-w-[90%] text-sm leading-relaxed text-gray-500">
+                {item.text}
+              </p>
+              <div class="mt-8">
+                <div class="h-px w-10 bg-gray-300" />
+              </div>
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</section>

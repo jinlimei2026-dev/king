@@ -1,0 +1,380 @@
+---
+
+---
+
+<script>
+  // @ts-nocheck
+  const runIdle = (cb) => {
+    if ("requestIdleCallback" in window) {
+      return window.requestIdleCallback(cb, { timeout: 2000 });
+    }
+    return window.setTimeout(cb, 200);
+  };
+
+  const initOnFirstInteraction = (events, cb) => {
+    let initialized = false;
+    const listenerOptions = { passive: true, once: true };
+
+    const run = () => {
+      if (initialized) return;
+      initialized = true;
+      events.forEach((eventName) =>
+        window.removeEventListener(eventName, run, listenerOptions),
+      );
+      cb();
+    };
+
+    events.forEach((eventName) =>
+      window.addEventListener(eventName, run, listenerOptions),
+    );
+  };
+
+  const loadDynamicModule = async (key, importer) => {
+    const storageKey = `dynamic-import-reload:${key}`;
+
+    try {
+      const mod = await importer();
+      sessionStorage.removeItem(storageKey);
+      return mod;
+    } catch (error) {
+      const isDevHost =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+      const failedImport =
+        error instanceof TypeError &&
+        String(error.message).includes(
+          "Failed to fetch dynamically imported module",
+        );
+
+      if (isDevHost && failedImport && !sessionStorage.getItem(storageKey)) {
+        sessionStorage.setItem(storageKey, "1");
+        window.location.reload();
+        return null;
+      }
+
+      sessionStorage.removeItem(storageKey);
+      throw error;
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    runIdle(async () => {
+      await initLucide();
+      await loadPrelineComponents();
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const canHover = window.matchMedia("(hover: hover)").matches;
+      const finePointer = window.matchMedia("(pointer: fine)").matches;
+
+      initScrollReveals(prefersReducedMotion);
+      if (!prefersReducedMotion && finePointer) {
+        initOnFirstInteraction(
+          ["wheel", "keydown", "pointerdown", "touchstart"],
+          async () => {
+            const smoothScrollModule = await loadDynamicModule(
+              "smoothscroll-for-websites",
+              () => import("smoothscroll-for-websites"),
+            );
+            if (!smoothScrollModule) return;
+            const { default: SmoothScroll } = smoothScrollModule;
+            SmoothScroll({
+              animationTime: 600,
+              stepSize: 60,
+              touchpadSupport: true,
+            });
+          },
+        );
+      }
+
+      initHorizontalScroll();
+
+      if (canHover) {
+        initOnFirstInteraction(["pointerover"], () => {
+          initCreativeHoverAnimation();
+          initMagneticHoverAnimation();
+        });
+      }
+    });
+  });
+
+  async function initLucide() {
+    const iconElems = document.querySelectorAll("[data-lucide]");
+    if (!iconElems.length) return;
+    const lucideModule = await loadDynamicModule(
+      "lucide",
+      () => import("lucide"),
+    );
+    if (!lucideModule) return;
+    const warnedIcons = new Set();
+
+    iconElems.forEach((iconElem) => {
+      const iconName = iconElem.getAttribute("data-lucide");
+      if (!iconName) return;
+
+      const IconDef = lucideModule[iconName];
+      if (!IconDef) {
+        if (!warnedIcons.has(iconName)) {
+          warnedIcons.add(iconName);
+          console.warn(
+            `Lucide icon "${iconName}" not found. Use a valid Lucide export name or add it to Icons.astro for inline rendering.`,
+          );
+        }
+        iconElem.replaceWith(createMissingLucideFallback(iconElem, iconName));
+        return;
+      }
+
+      const svg = lucideModule.createElement(IconDef, {
+        ...Object.fromEntries(
+          [...iconElem.attributes].map((attr) => [attr.name, attr.value]),
+        ),
+      });
+
+      iconElem.replaceWith(svg);
+    });
+  }
+
+  function createMissingLucideFallback(iconElem, iconName) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    const titleText = iconElem.getAttribute("data-lucide-title");
+    const attrs = Object.fromEntries(
+      [...iconElem.attributes]
+        .filter((attr) => attr.name !== "data-lucide-title")
+        .map((attr) => [attr.name, attr.value]),
+    );
+
+    Object.entries({
+      viewBox: "0 0 24 24",
+      width: attrs.width || "24",
+      height: attrs.height || "24",
+      fill: attrs.fill || "none",
+      stroke: attrs.stroke || "currentColor",
+      "stroke-width": attrs["stroke-width"] || "2",
+      "stroke-linecap": attrs["stroke-linecap"] || "round",
+      "stroke-linejoin": attrs["stroke-linejoin"] || "round",
+      "data-lucide-missing": "true",
+      ...attrs,
+    }).forEach(([name, value]) => {
+      if (value != null && value !== "") {
+        svg.setAttribute(name, value);
+      }
+    });
+
+    if (titleText) {
+      const title = document.createElementNS(svgNS, "title");
+      title.textContent = `${titleText} (missing icon: ${iconName})`;
+      svg.appendChild(title);
+    }
+
+    const circle = document.createElementNS(svgNS, "circle");
+    circle.setAttribute("cx", "12");
+    circle.setAttribute("cy", "12");
+    circle.setAttribute("r", "10");
+
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("x1", "12");
+    line.setAttribute("y1", "8");
+    line.setAttribute("x2", "12");
+    line.setAttribute("y2", "12");
+
+    const dot = document.createElementNS(svgNS, "circle");
+    dot.setAttribute("cx", "12");
+    dot.setAttribute("cy", "16");
+    dot.setAttribute("r", "1");
+
+    svg.append(circle, line, dot);
+    return svg;
+  }
+
+  function initScrollReveals(prefersReducedMotion) {
+    const revealItems = document.querySelectorAll<HTMLElement>("[data-aos]");
+    if (!revealItems.length) return;
+
+    document.documentElement.classList.add("reveal-ready");
+
+    revealItems.forEach((item) => {
+      const duration = item.getAttribute("data-aos-duration");
+      const delay = item.getAttribute("data-aos-delay");
+
+      if (duration) {
+        item.style.setProperty("--reveal-duration", `${duration}ms`);
+      }
+
+      if (delay) {
+        item.style.setProperty("--reveal-delay", `${delay}ms`);
+      }
+    });
+
+    const start = () => {
+      if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+        revealItems.forEach((item) => item.classList.add("aos-animate"));
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add("aos-animate");
+            observer.unobserve(entry.target);
+          });
+        },
+        {
+          root: null,
+          threshold: 0.12,
+          rootMargin: "0px 0px -8% 0px",
+        },
+      );
+
+      revealItems.forEach((item) => observer.observe(item));
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(start);
+    });
+  }
+
+  async function loadPrelineComponents() {
+    const hasComponent = (selectors: string[]) =>
+      selectors.some((selector) => document.querySelector(selector));
+
+    const tasks: Promise<void>[] = [];
+
+    if (hasComponent([".hs-select", "[data-hs-select]"])) {
+      tasks.push(
+        loadDynamicModule(
+          "@preline/select",
+          () => import("@preline/select"),
+        ).then((module) => {
+          if (!module) return;
+          const { default: HSSelect } = module;
+          HSSelect.autoInit();
+        }),
+      );
+    }
+
+    if (hasComponent([".hs-overlay"])) {
+      tasks.push(
+        loadDynamicModule(
+          "@preline/overlay",
+          () => import("@preline/overlay"),
+        ).then((module) => {
+          if (!module) return;
+          const { default: HSOverlay } = module;
+          HSOverlay.autoInit();
+        }),
+      );
+    }
+
+    if (tasks.length) {
+      await Promise.all(tasks);
+    }
+  }
+
+  function initHorizontalScroll() {
+    document.addEventListener(
+      "wheel",
+      (event) => {
+        if (!event.shiftKey) return;
+        if (!(event.target instanceof HTMLElement)) return;
+
+        let current = event.target;
+
+        while (current && current !== document.body) {
+          const style = window.getComputedStyle(current);
+          const canScrollX =
+            /(auto|scroll|overlay)/.test(style.overflowX) &&
+            current.scrollWidth > current.clientWidth;
+
+          if (canScrollX) {
+            event.preventDefault();
+            current.scrollBy({
+              left: event.deltaY * 3,
+              behavior: "smooth",
+            });
+            return;
+          }
+
+          current = current.parentElement;
+        }
+      },
+      { passive: false },
+    );
+  }
+
+  function initCreativeHoverAnimation() {
+    document.addEventListener("mouseover", function (e) {
+      const target = e.target.closest(".creative-hover-anim");
+      if (target) {
+        const hoverBg = target.querySelector(".hover-bg");
+        if (hoverBg) {
+          const parentOffset = target.getBoundingClientRect();
+          const relX = e.clientX - parentOffset.left;
+          const relY = e.clientY - parentOffset.top;
+          hoverBg.style.setProperty("--creative-hover-top", `${relY}px`);
+          hoverBg.style.setProperty("--creative-hover-left", `${relX}px`);
+        }
+      }
+    });
+  }
+
+  function initMagneticHoverAnimation() {
+    const speed = 0.3;
+    const maxDistance = 30;
+    let rafId: number;
+
+    function clamp(val: number, max: number): number {
+      return Math.max(-max, Math.min(val, max));
+    }
+
+    function handleMagneticHover(magneticElem: HTMLElement) {
+      let isInside = false;
+
+      function updateTransform(e: MouseEvent) {
+        if (!isInside) return;
+
+        const rect = magneticElem.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) * speed;
+        const y = (e.clientY - rect.top - rect.height / 2) * speed;
+
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          magneticElem.style.transform = `translate(${clamp(x, maxDistance)}px, ${clamp(y, maxDistance)}px)`;
+        });
+      }
+
+      function resetTransform() {
+        isInside = false;
+        cancelAnimationFrame(rafId);
+        magneticElem.style.transition = "transform 0.2s ease-out";
+        magneticElem.style.transform = "translate(0, 0)";
+      }
+
+      magneticElem.style.willChange = "transform";
+      magneticElem.addEventListener("mouseenter", () => {
+        isInside = true;
+        magneticElem.style.transition = "transform 0.2s ease-out";
+      });
+      magneticElem.addEventListener("mousemove", updateTransform);
+      magneticElem.addEventListener("mouseleave", resetTransform);
+    }
+
+    document
+      .querySelectorAll<HTMLElement>(".magnetic-hover-anim")
+      .forEach(handleMagneticHover);
+
+    window.addEventListener("mouseout", (e) => {
+      if (!e.relatedTarget && !e.toElement) {
+        document
+          .querySelectorAll<HTMLElement>(".magnetic-hover-anim")
+          .forEach((elem) => {
+            elem.style.transition = "transform 0.2s ease-out";
+            elem.style.transform = "translate(0, 0)";
+          });
+      }
+    });
+  }
+</script>

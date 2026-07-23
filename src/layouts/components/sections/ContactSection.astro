@@ -1,0 +1,96 @@
+---
+import type { Section } from "@/types";
+import ContactForm from "../widgets/ContactForm.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { contactSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import VerticalLabel from "@/components/widgets/VerticalLabel.astro";
+
+type ContactSection = Section & z.infer<typeof contactSectionSchema>;
+
+type Props = {
+  content?: ContactSection;
+  hasSectionSpacing?: boolean;
+};
+
+let defaultContent = (
+  await getEntryCTM("sections", "contact-section", Astro.currentLocale)
+)?.data as ContactSection;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as ContactSection;
+
+let {
+  enable = true,
+  title,
+  form,
+  image,
+  imageAlt,
+  characterImage,
+  characterImageAlt,
+  badge,
+} = actualContent;
+
+if (!enable) return null;
+const { hasSectionSpacing = true } = Astro.props;
+---
+
+<section
+  id="contact"
+  class:list={["scroll-mt-28 overflow-hidden", { "pt-0": !hasSectionSpacing }]}>
+  <div class="bg-theme-dark relative flex flex-col lg:flex-row">
+    <div class="container">
+      <div
+        class="top-0 left-0 mx-auto h-150 overflow-hidden md:w-auto lg:absolute lg:float-end lg:mx-0 lg:h-full lg:min-w-[calc(50%-200px)] lg:pt-20 xl:min-w-[calc(50%-250px)]"
+        data-aos="fade-right-sm"
+        data-aos-duration="800">
+        {
+          image && (
+            <OptimizedImage
+              src={image}
+              alt={imageAlt || "Contact"}
+              width={700}
+              height={600}
+              class="inset-0 size-full object-cover lg:absolute"
+            />
+          )
+        }
+      </div>
+
+      <div
+        class="has-vertical-text-right section-spacing-vertical relative float-end flex w-full flex-col justify-center gap-6 md:gap-14 lg:max-w-[calc(100%-400px)] xl:max-w-[calc(100%-500px)]"
+        data-aos="fade-left-sm"
+        data-aos-duration="800">
+        {
+          badge && (
+            <VerticalLabel
+              text={badge}
+              scrambleDelay={200}
+              class="lg:text-text-inverse/2 right-0 text-center"
+            />
+          )
+        }
+        {title && <SectionTitle title={title} variant="dark" />}
+        {form && <ContactForm form={form} />}
+      </div>
+      {
+        characterImage && (
+          <div class="pointer-events-none right-11.5 bottom-22 hidden select-none lg:absolute lg:block">
+            <OptimizedImage
+              src={characterImage}
+              alt={characterImageAlt || "3D character"}
+              width={210}
+              height={180}
+              class="h-auto w-full object-contain"
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,79 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "warranty-flow",
+  Astro.currentLocale,
+);
+if (!sectionData || !sectionData.data.enable) return;
+
+const { badge, title, image, list } = sectionData.data;
+---
+
+<section class="section">
+  <div
+    class="container grid grid-cols-1 items-center lg:grid-cols-2 lg:gap-16 xl:gap-24">
+    <div class="w-full py-10">
+      {
+        image && (
+          <OptimizedImage
+            src={image}
+            alt={title}
+            width={870}
+            height={900}
+            class="aspect-4/3 w-full overflow-hidden rounded-2xl object-cover shadow-lg lg:aspect-square lg:rounded-3xl"
+          />
+        )
+      }
+    </div>
+
+    <div class="flex w-full flex-col justify-center gap-6 lg:py-10">
+      <div>
+        {badge && <SectionBadge title={badge} />}
+        {title && <SectionTitle title={title} />}
+      </div>
+
+      {
+        list && list.length > 0 && (
+          <div class="relative mt-4 flex flex-col">
+            {list.map((item: any, i: number) => (
+              <div
+                class="relative flex items-start gap-5 pb-8 lg:gap-6 lg:pb-10"
+                data-aos="fade-up"
+                data-aos-delay={i * 100}>
+                {i !== list.length - 1 && (
+                  <div class="border-primary absolute top-12 left-6 -ml-px h-full w-0 border-l-2 border-dashed lg:top-14 lg:left-8" />
+                )}
+
+                <div class="relative z-10 shrink-0">
+                  <div
+                    class:list={[
+                      "flex size-12 items-center justify-center rounded-full text-xl font-bold text-white lg:size-16",
+                      i === 0 ? "bg-primary" : "bg-theme-dark",
+                    ]}>
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                </div>
+
+                <div class="pt-1 lg:pt-3">
+                  <h3 class="mb-2 text-xl font-semibold lg:text-2xl">
+                    {item.title}
+                  </h3>
+                  <p
+                    class="text-text-default/70 text-sm leading-relaxed md:text-base lg:max-w-md"
+                    set:html={markdownify(item.description)}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

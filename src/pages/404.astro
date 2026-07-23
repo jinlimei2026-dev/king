@@ -1,0 +1,15 @@
+---
+import Base from "@/layouts/Base.astro";
+import NotFoundSection from "@/components/sections/404Section.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const title = "Page Not Found";
+---
+
+<Base status={404} title={title} disableTagline={true} fitToScreen={false}>
+  <NotFoundSection />
+</Base>

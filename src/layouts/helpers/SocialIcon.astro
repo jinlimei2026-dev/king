@@ -1,0 +1,166 @@
+---
+interface Props {
+  name: string;
+  class?: string;
+  title?: string;
+}
+
+const { name, class: className, title } = Astro.props;
+const key = (name || "").toLowerCase();
+
+type IconElement =
+  | { type: "path"; attrs: Record<string, string | number> }
+  | { type: "rect"; attrs: Record<string, string | number> }
+  | { type: "circle"; attrs: Record<string, string | number> }
+  | { type: "line"; attrs: Record<string, string | number> };
+
+const icons: Record<string, { viewBox: string; elements: IconElement[] }> = {
+  facebook: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
+        },
+      },
+    ],
+  },
+  "twitter-old": {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 16.5 3a4.48 4.48 0 0 0-4.47 4.48c0 .35.04.7.11 1.03A12.94 12.94 0 0 1 1.64 3.16a4.48 4.48 0 0 0 1.39 5.98A4.41 4.41 0 0 1 1 8.29v.06a4.48 4.48 0 0 0 3.59 4.39 4.5 4.5 0 0 1-2.02.08 4.48 4.48 0 0 0 4.18 3.11A9 9 0 0 1 0 19.54 12.94 12.94 0 0 0 7 21c8.4 0 13-6.95 13-13v-.59A9.54 9.54 0 0 0 23 3z",
+        },
+      },
+    ],
+  },
+  "twitter-new": {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M18.244 2.25h-3.82l-3.26 4.238-3.577-4.238H3.72l5.537 6.574-5.756 8.926h3.82l3.78-5.001 4.18 5.001h3.82l-5.99-7.129 5.133-8.371z",
+        },
+      },
+    ],
+  },
+  linkedin: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z",
+        },
+      },
+      { type: "rect", attrs: { width: 4, height: 12, x: 2, y: 9 } },
+      { type: "circle", attrs: { cx: 4, cy: 4, r: 2 } },
+    ],
+  },
+  instagram: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "rect",
+        attrs: { width: 20, height: 20, x: 2, y: 2, rx: 5, ry: 5 },
+      },
+      {
+        type: "path",
+        attrs: { d: "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" },
+      },
+      { type: "line", attrs: { x1: 17.5, y1: 6.5, x2: 17.51, y2: 6.5 } },
+    ],
+  },
+  github: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 8.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22",
+        },
+      },
+    ],
+  },
+  youtube: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17",
+        },
+      },
+      { type: "path", attrs: { d: "m10 15 5-3-5-3z" } },
+    ],
+  },
+  pinterest: {
+    viewBox: "0 0 24 24",
+    elements: [
+      {
+        type: "path",
+        attrs: {
+          d: "M8 13l4-9 4 9-4 9-4-9z",
+        },
+      },
+    ],
+  },
+  dribbble: {
+    viewBox: "0 0 24 24",
+    elements: [
+      { type: "circle", attrs: { cx: 12, cy: 12, r: 10 } },
+      {
+        type: "path",
+        attrs: {
+          d: "M8.56 2.75c4.37 6.03 6.02 9.42 8.84 16.93",
+        },
+      },
+      {
+        type: "path",
+        attrs: { d: "M20.7 7c-5.8.6-9.3 2.7-13.6 6.6" },
+      },
+      { type: "path", attrs: { d: "M2 12.5c6.3-2.3 10.9-2.2 16.2 1" } },
+    ],
+  },
+};
+
+const icon = icons[key];
+---
+
+{
+  icon ? (
+    <svg
+      class={["lucide", `lucide-${key}-icon`, `lucide-${key}`, className]
+        .filter(Boolean)
+        .join(" ")}
+      viewBox={icon.viewBox}
+      width="24"
+      height="24"
+      data-icon="social"
+      aria-hidden={title ? "false" : "true"}
+      role={title ? "img" : "presentation"}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      {title && <title>{title}</title>}
+      {icon.elements.map((el) =>
+        el.type === "path" ? (
+          <path {...el.attrs} />
+        ) : el.type === "rect" ? (
+          <rect {...el.attrs} />
+        ) : el.type === "circle" ? (
+          <circle {...el.attrs} />
+        ) : (
+          <line {...el.attrs} />
+        ),
+      )}
+    </svg>
+  ) : null
+}

@@ -1,0 +1,179 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "shipping-packaging",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { part1, part2, part3 } = sectionData.data;
+---
+
+<section class="w-full overflow-hidden bg-[#f8f9fa] py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div class="mb-32 flex flex-col items-center gap-16 lg:flex-row lg:gap-20">
+      <div
+        class="relative h-125 w-full lg:h-162.5 lg:w-1/2"
+        data-aos="fade-right">
+        <div
+          class="absolute -top-10 -left-10 z-0 h-40 w-40 rounded-full bg-[radial-gradient(#e5e7eb_2px,transparent_2px)] bg-size-[16px_16px] opacity-50">
+        </div>
+
+        <OptimizedImage
+          src={part1.images.main}
+          alt="Main Packaging"
+          class="absolute top-0 right-0 z-10 h-[75%] w-[85%] rounded-[2.5rem] object-cover shadow-lg"
+          width={800}
+          height={600}
+        />
+
+        <OptimizedImage
+          src={part1.images.sub}
+          alt="Packaging Detail"
+          class="absolute right-0 bottom-10 z-20 h-[45%] w-[55%] rounded-4xl border-10 border-[#f8f9fa] object-cover shadow-2xl"
+          width={600}
+          height={400}
+        />
+
+        <div
+          class="absolute bottom-24 left-0 z-30 flex items-center gap-6 rounded-2xl bg-white p-6 shadow-2xl md:p-8">
+          <span
+            class="text-4xl font-extrabold tracking-tight text-[#0f172a] md:text-5xl">
+            {part1.stats.number}
+          </span>
+          <p
+            class="w-24 text-sm leading-tight font-medium text-gray-500 md:text-base">
+            {part1.stats.text}
+          </p>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-1/2" data-aos="fade-left">
+        <div class="mb-4 flex items-center gap-4">
+          <span
+            class="text-sm font-bold tracking-[0.15em] text-[#2563eb] uppercase">
+            {part1.subtitle}
+          </span>
+          <div class="h-0.5 w-12 bg-[#2563eb]"></div>
+        </div>
+        <h2
+          class="mb-6 text-4xl leading-[1.15] font-bold text-[#0f172a] md:text-5xl">
+          {part1.title}
+        </h2>
+        <p class="mb-8 leading-relaxed text-gray-500">
+          {part1.description}
+        </p>
+
+        <div
+          class="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-gray-200 pb-10 sm:grid-cols-2">
+          {
+            part1.bullets.map((bullet: string) => (
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-check font-bold text-[#2563eb]" />
+                <span class="text-sm font-bold text-[#0f172a]">{bullet}</span>
+              </div>
+            ))
+          }
+        </div>
+
+        <p class="mb-8 text-sm leading-relaxed text-gray-500">
+          {part1.bottomText}
+        </p>
+        <div class="flex flex-wrap items-center gap-6">
+          <a
+            href={part1.button.url}
+            class="inline-flex items-center gap-2 rounded-full bg-[#2563eb] px-8 py-4 font-bold text-white transition-colors hover:bg-[#1d4ed8]">
+            {part1.button.label}
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 text-xl text-[#0f172a]">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Need Help?</p>
+              <p class="font-bold text-[#0f172a]">{part1.phone}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-20 border-t border-gray-200 pt-16">
+      <div class="mb-16 text-center" data-aos="fade-up">
+        <div class="mb-4 flex items-center justify-center gap-4">
+          <div class="h-0.5 w-8 bg-[#2563eb]"></div>
+          <span
+            class="text-sm font-bold tracking-[0.15em] text-[#2563eb] uppercase">
+            {part2.subtitle}
+          </span>
+          <div class="h-0.5 w-8 bg-[#2563eb]"></div>
+        </div>
+        <h2 class="mb-12 text-4xl font-bold text-[#0f172a] md:text-5xl">
+          {part2.title}
+        </h2>
+      </div>
+
+      <div
+        class="mb-8 flex flex-col items-end justify-between gap-8 md:flex-row"
+        data-aos="fade-up">
+        <h3 class="text-2xl font-bold text-[#0f172a] md:w-1/3 md:text-3xl">
+          {part2.itemTitle}
+        </h3>
+        <p class="leading-relaxed text-gray-500 md:w-1/2">
+          {part2.itemDescription}
+        </p>
+      </div>
+
+      <div
+        class="h-100 w-full overflow-hidden rounded-4xl shadow-2xl md:h-150"
+        data-aos="fade-up"
+        data-aos-delay="100">
+        <OptimizedImage
+          src={part2.largeImage}
+          alt="Container Loading"
+          class="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+          width={1500}
+          height={800}
+        />
+      </div>
+    </div>
+
+    <div class="mx-auto w-full max-w-5xl" data-aos="fade-up">
+      <ul class="flex flex-col border-t border-gray-200">
+        {
+          part3.steps.map((step: any, index: number) => {
+            const numberString = (index + 1).toString().padStart(2, "0");
+
+            return (
+              <li class="group -mx-6 flex cursor-default flex-col justify-between rounded-2xl border-b border-gray-200 px-6 py-8 transition-colors hover:bg-white md:flex-row md:items-center">
+                <div class="mb-4 w-full md:mb-0 md:w-1/3">
+                  <h4 class="text-2xl font-bold text-[#0f172a] transition-colors group-hover:text-[#2563eb]">
+                    {step.title}
+                  </h4>
+                </div>
+
+                <div class="w-full pr-0 md:w-1/2 md:pr-12">
+                  <p class="text-sm leading-relaxed text-gray-500 md:text-base">
+                    {step.description}
+                  </p>
+                </div>
+
+                <div class="mt-4 flex w-full md:mt-0 md:w-1/6 md:justify-end">
+                  <span class="text-5xl font-light text-gray-200 transition-colors group-hover:text-[#2563eb]/20 md:text-6xl">
+                    {numberString}
+                  </span>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</section>

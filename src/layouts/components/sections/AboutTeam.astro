@@ -1,0 +1,95 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "about-team",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const { title, subtitle, description, members } = sectionData.data;
+---
+
+<section class="w-full overflow-hidden bg-[#f9f9f9] py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+      <div
+        class="mb-10 flex flex-col justify-center pr-0 md:col-span-2 lg:col-span-1 lg:mb-0 lg:pr-10"
+        data-aos="fade-right">
+        <div class="mb-6 flex items-center gap-4">
+          <div class="h-px w-12 bg-blue-600"></div>
+          <span
+            class="text-xs font-bold tracking-[0.2em] text-blue-600 uppercase">
+            {subtitle}
+          </span>
+        </div>
+
+        <h2
+          class="mb-8 text-4xl leading-[1.1] font-medium tracking-tight text-gray-900 md:text-5xl">
+          {title}
+        </h2>
+
+        <p class="text-lg leading-relaxed text-gray-600">
+          {description}
+        </p>
+
+        <div class="mt-12 hidden lg:block">
+          <svg
+            viewBox="0 0 100 100"
+            class="h-24 w-24 text-gray-200"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1">
+            <circle cx="50" cy="50" r="40"></circle>
+            <path d="M50 30 L50 70 M30 50 L70 50"></path>
+          </svg>
+        </div>
+      </div>
+
+      {
+        members &&
+          members.map((member: any, index: number) => (
+            <div
+              class="group relative flex flex-col rounded-[2.5rem] bg-white p-4 shadow-sm transition-all duration-500 hover:shadow-xl"
+              data-aos="fade-up"
+              data-aos-delay={index * 100}>
+              <div class="mb-8 aspect-4/5 w-full overflow-hidden rounded-4xl bg-gray-100">
+                <OptimizedImage
+                  src={member.image}
+                  alt={member.name}
+                  class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  width={500}
+                  height={625}
+                />
+              </div>
+
+              <div class="px-4 pb-6">
+                <h4 class="mb-1 text-2xl font-bold text-gray-900">
+                  {member.name}
+                </h4>
+                <p class="mb-4 text-sm font-bold tracking-wide text-blue-600 uppercase">
+                  {member.role}
+                </p>
+
+                <div class="border-t border-gray-100 pt-4">
+                  <span class="mb-1 block text-xs text-gray-400">
+                    Area of Expertise:
+                  </span>
+                  <p class="text-sm font-medium text-gray-700">
+                    {member.specialty}
+                  </p>
+                </div>
+              </div>
+
+              <div class="absolute top-8 right-8 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100">
+                <i class="fa-solid fa-arrow-up-right-from-square" />
+              </div>
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</section>

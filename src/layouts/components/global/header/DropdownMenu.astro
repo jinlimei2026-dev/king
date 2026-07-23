@@ -1,0 +1,249 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import type { NavigationLink } from "@/types";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import { isActiveMenu, isActiveUrl } from "@/lib/utils/navigationActive";
+import { Image } from "astro:assets";
+
+import imgGlassWool from "@/assets/images/glass-wool-menu1.png";
+import imgRubberPlastic from "@/assets/images/rubber-plastic-menu1.png";
+import imgWorkingProcess from "@/assets/images/service/products-menu-right.png";
+import imgBanner3 from "@/assets/images/service/menu-shipping.png";
+import imgAboutTwo from "@/assets/images/service/menu-warranty.png";
+import imgContactHome from "@/assets/images/service/menu-shipping.png";
+import imgService1 from "@/assets/images/service/menu-custom.png";
+import imgService2 from "@/assets/images/service/menu-applacations-hvac.png";
+import imgService3 from "@/assets/images/service/menu-applacations-industrial.png";
+import imgService4 from "@/assets/images/service/menu-applacations-steel.png";
+import imgService5 from "@/assets/images/service/mune-about-us.png";
+import imgService6 from "@/assets/images/service/menu-faq.png";
+import imgService7 from "@/assets/images/service/menu-contact.png";
+
+const { pathname, hostname } = Astro.url;
+const { recursive } = Astro.props;
+const menu = Astro.props.menu as NavigationLink;
+const enabledChildren =
+  menu.children?.filter((child) => child.enable !== false) || [];
+
+const isMegaMenu = !recursive && enabledChildren.length > 0;
+const megaMenuCards: Record<string, any> = {
+  Products: {
+    img: imgWorkingProcess,
+    tag: "OEM & ODM Solutions",
+    title: "Tailored Insulation Products",
+    desc: "Custom dimensions, specialized foil facings, and private label packaging engineered for your specific project needs.",
+    btnText: "Custom Requirment",
+    btnUrl: "/support/custom-service/",
+  },
+  Applications: {
+    img: imgBanner3,
+    tag: "Logistics",
+    title: "Global Shipping & Delivery",
+    desc: "Optimized container loading, high-ratio vacuum compression, and flexible FOB/DDP terms to significantly reduce your ocean freight costs.",
+    btnText: "View Shipping Terms",
+    btnUrl: "/support/shipping-logistics/",
+  },
+  "Why Us": {
+    img: imgService6,
+    tag: "Knowledge Base",
+    title: "Frequently Asked Questions",
+    desc: "Find quick answers regarding our insulation specifications, OEM customization, MOQ, and global shipping policies.",
+    btnText: "Find Answers",
+    btnUrl: "/support/faq/",
+  },
+  Support: {
+    img: imgService7,
+    tag: "Help Center",
+    title: "Need Assistance?",
+    desc: "Technical data sheets and custom OEM services.",
+    btnText: "Contact Support",
+    btnUrl: "/contact/",
+  },
+};
+
+const currentCard = megaMenuCards[menu.name] || megaMenuCards["Products"];
+const categoryImages: Record<string, any[]> = {
+  Products: [imgGlassWool, imgRubberPlastic],
+  Applications: [imgService2, imgService3, imgService4],
+  "Why Us": [imgService5, imgAboutTwo, imgContactHome],
+  Support: [imgService6, imgService1, imgContactHome],
+};
+
+const currentImages = categoryImages[menu.name] || [imgService1, imgService2];
+const categoryIcons: Record<string, string[]> = {
+  Products: [
+    "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
+    "M4 8V16C4 18.2091 7.58172 20 12 20C16.4183 20 20 18.2091 20 16V8M4 8C4 10.2091 7.58172 12 12 12C16.4183 12 20 10.2091 20 8C20 5.79086 16.4183 4 12 4C7.58172 4 4 5.79086 4 8Z",
+  ],
+  Applications: [
+    "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
+    "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+    "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+  ],
+  "Why Us": [
+    "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+    "M13 10V3L4 14h7v7l9-11h-7z",
+    "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+  ],
+  Support: [
+    "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4",
+    "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+  ],
+};
+
+const currentIcons = categoryIcons[menu.name] || ["M12 9v3m0 0v3m0-3h3m-3 0H9"];
+---
+
+<li
+  class:list={[
+    "hs-dropdown nav-dropdown group/main [--auto-close:inside] [--offset:0px]",
+    recursive ? "nav-dropdown-item [--placement:right-start]" : "nav-item",
+    isMegaMenu ? "lg:static!" : "relative",
+    isMegaMenu ? "lg:[--strategy:static]" : "lg:[--strategy:absolute]",
+  ]}
+  role="menuitem">
+  <button
+    type="button"
+    aria-haspopup={isMegaMenu ? "menu" : undefined}
+    aria-expanded="false"
+    class:list={[
+      "nav-dropdown-toggle hs-dropdown-toggle flex cursor-pointer items-center",
+      {
+        active:
+          isActiveMenu(menu, pathname, Astro.currentLocale, hostname) &&
+          !menu.hasChildren,
+      },
+      recursive
+        ? "nav-dropdown-link justify-between"
+        : "nav-link max-lg:flex! max-lg:justify-between",
+    ]}>
+    {menu.name}
+    <Icons
+      icon="ChevronDown"
+      class="hs-dropdown-open:rotate-180 ms-2 size-4 transition-transform duration-300"
+    />
+  </button>
+
+  {
+    isMegaMenu && (
+      <div
+        class="nav-dropdown-list hs-dropdown-menu hs-dropdown-open:pointer-events-auto hs-dropdown-open:opacity-100 hs-dropdown-open:translate-y-0 pointer-events-none absolute z-50 mt-0 hidden w-full translate-y-2 opacity-0 transition-all duration-300 max-lg:m-0! max-lg:transform-none! lg:fixed lg:top-(--header-bottom) lg:left-0 lg:block lg:w-screen"
+        role="menu">
+        <div class="w-full border-t border-b border-gray-100 bg-white shadow-[0_40px_60px_-15px_rgba(0,0,0,0.15)] dark:border-gray-800 dark:bg-gray-900">
+          <div class="container mx-auto max-w-350 px-4 md:px-8">
+            <div class="flex flex-col lg:flex-row">
+              <div
+                class={`grid flex-1 gap-8 p-10 md:p-14 ${enabledChildren.length <= 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
+                {enabledChildren.map((child: any, index: number) => (
+                  <a
+                    href={child.url}
+                    aria-label={child.name}
+                    role="menuitem"
+                    class="group/child -m-4 flex h-full flex-col rounded-2xl p-4 text-gray-900 transition-all duration-300 hover:bg-gray-50 hover:text-blue-600 dark:text-white dark:hover:bg-gray-800/40">
+                    <div class="mb-3 flex items-center gap-3">
+                      <svg
+                        class="size-5 shrink-0 text-current transition-colors duration-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d={currentIcons[index % currentIcons.length]}
+                        />
+                      </svg>
+                      <p class="text-base font-bold whitespace-nowrap text-current transition-colors duration-300 xl:text-lg">
+                        {child.name}
+                      </p>
+                    </div>
+
+                    <p class="mb-6 grow text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                      {child.description ||
+                        "Premium thermal and acoustic insulation solutions engineered for global B2B projects and flexible retail distribution."}
+                    </p>
+
+                    <div class="mt-auto aspect-video w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
+                      <Image
+                        src={currentImages[index % currentImages.length]}
+                        alt={child.name}
+                        width={600}
+                        format="webp"
+                        class="h-full w-full object-cover opacity-90 transition-all duration-500 group-hover/child:scale-105 group-hover/child:opacity-100"
+                      />
+                    </div>
+                  </a>
+                ))}
+              </div>
+
+              <div class="group/card flex w-full shrink-0 flex-col justify-between border-l border-gray-800 bg-gray-900 p-10 text-white lg:w-95">
+                <div>
+                  <div class="mb-8 overflow-hidden rounded-xl">
+                    <Image
+                      src={currentCard.img}
+                      alt={currentCard.tag}
+                      width={400}
+                      format="webp"
+                      class="aspect-video w-full object-cover opacity-85 transition-all duration-500 group-hover/card:scale-105 group-hover/card:opacity-100"
+                    />
+                  </div>
+                  <p class="mb-3 text-xs font-bold tracking-widest text-blue-400 uppercase">
+                    {currentCard.tag}
+                  </p>
+                  <p class="mb-4 text-2xl leading-tight font-bold">
+                    {currentCard.title}
+                  </p>
+                  <p class="text-sm leading-relaxed text-gray-400">
+                    {currentCard.desc}
+                  </p>
+                </div>
+                <a
+                  href={currentCard.btnUrl}
+                  aria-label={currentCard.btnText}
+                  role="menuitem"
+                  class="mt-10 flex w-full items-center justify-between gap-2 rounded-xl bg-white px-6 py-4 text-sm font-bold text-gray-900 transition-all hover:scale-[1.02] hover:bg-gray-100">
+                  {currentCard.btnText}
+                  <Icons icon="ArrowUpRight" class="size-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  {
+    !isMegaMenu && menu.hasChildren && enabledChildren?.length && (
+      <ul
+        class="nav-dropdown-list hs-dropdown-menu hs-dropdown-open:pointer-events-auto hs-dropdown-open:opacity-100 pointer-events-none absolute top-0 mt-2 hidden opacity-0 transition-[opacity,margin] max-lg:m-0! max-lg:transform-none! lg:block"
+        role="menu">
+        {enabledChildren.map((child) => (
+          <li class="nav-dropdown-item" role="none">
+            <a
+              role="menuitem"
+              aria-label={child.name}
+              href={getLocaleUrlCTM(
+                child.url || Astro.url.origin,
+                Astro.currentLocale,
+              )}
+              class:list={[
+                "nav-dropdown-link block",
+                {
+                  active: isActiveUrl(
+                    child.url,
+                    pathname,
+                    Astro.currentLocale,
+                    hostname,
+                  ),
+                },
+              ]}>
+              {child.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</li>

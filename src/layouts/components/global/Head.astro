@@ -1,0 +1,66 @@
+---
+import SEO from "@/components/seo/Seo.astro";
+import JsonLD from "../widgets/JsonLD.astro";
+import Favicons from "@/components/seo/Favicons.astro";
+import OpenGraph from "@/components/seo/OpenGraph.astro";
+import config from ".astro/config.generated.json";
+import { Font } from "astro:assets";
+import fontsJson from "@/config/fonts.json";
+
+const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
+const preloadImages = (Astro.props.preloadImages as string[]) || [];
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Language" content={Astro.currentLocale} />
+  <meta name="theme" content="kingsenda-site" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=5"
+  />
+  <script is:inline>
+    document.documentElement.classList.add("reveal-ready");
+  </script>
+  <SEO {...Astro.props} />
+  <meta
+    name="theme-color"
+    media="(prefers-color-scheme: light)"
+    content="#fff"
+  />
+  <meta
+    name="theme-color"
+    media="(prefers-color-scheme: dark)"
+    content="#000"
+  />
+  <meta name="generator" content={Astro.generator} />
+  {config.head?.content && <Fragment set:html={config.head?.content} />}
+  <OpenGraph {...Astro.props} />
+  <Favicons />
+  <JsonLD
+    content={{
+      ...Astro.props,
+    }}
+  />
+  {preloadImages.map((src) => <link rel="preload" as="image" href={src} />)}
+  <noscript>
+    <style>
+      [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        filter: none !important;
+        clip-path: inset(0 0 0 0) !important;
+      }
+    </style>
+  </noscript>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 110vh;
+    }
+  </style>
+
+  {fontVariables.map((font) => <Font cssVariable={font} />)}
+</head>

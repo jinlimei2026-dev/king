@@ -1,0 +1,22 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  title: string;
+  variant?: "dark" | "light";
+  className?: string;
+}
+
+const { title, variant = "light", className = "" } = Astro.props;
+---
+
+<span
+  class:list={[
+    "mb-4 block text-sm font-semibold tracking-wider uppercase lg:text-base",
+    variant === "dark" ? "text-white" : "text-primary",
+    className,
+  ]}
+  data-aos="fade-up"
+  data-aos-duration="600"
+  set:html={markdownify(title)}
+/>

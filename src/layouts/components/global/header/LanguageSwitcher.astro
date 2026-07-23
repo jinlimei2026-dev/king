@@ -1,0 +1,77 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import {
+  normalizeLocaleCode,
+  supportedLanguages,
+  useTranslations,
+} from "@/lib/utils/i18nUtils";
+import { getLocalizedPathnameCTM } from "@/lib/utils/localizedRouteResolver";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+
+const currentLocale = normalizeLocaleCode(Astro.currentLocale);
+const t = await useTranslations(currentLocale);
+const languages = (
+  await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const href = await getLocalizedPathnameCTM(
+        Astro.url.pathname,
+        currentLocale,
+        lang.languageCode as string,
+      );
+
+      if (href === trailingSlashChecker(Astro.url.pathname)) {
+        return;
+      }
+
+      return {
+        slug: href,
+        ...lang,
+      };
+    }),
+  )
+).filter(Boolean);
+
+if (languages.length === 0) {
+  return;
+}
+
+const idSuffix = Math.random().toString(36).substring(7);
+const toggleId = `language-switcher-dropdown-toggle-${idSuffix}`;
+---
+
+<div
+  class="language-switcher hs-dropdown relative inline-block bg-white [--gpu-acceleration:false] [--offset:8] [--placement:bottom-right] [--strategy:auto] lg:[--auto-close:inside]">
+  <button
+    type="button"
+    id={toggleId}
+    class="language-switcher-button hs-dropdown-toggle"
+    aria-expanded="false"
+    aria-label={t("aria.languageMenu") || "Select Language"}>
+    <Icons icon="Languages" class="size-4" />
+    <span class="text uppercase">{currentLocale}</span>
+    <Icons icon="ChevronDown" class="size-4" />
+  </button>
+  <ul
+    class="language-switcher-dropdown hs-dropdown-menu hs-dropdown-open:opacity-100 hs-dropdown-open:mt-0! hs-dropdown-open:visible z-50 mt-2 hidden min-w-full opacity-0 transition-[opacity,margin] [--placement:right-bottom]"
+    aria-labelledby={toggleId}>
+    {
+      languages.map(
+        (language) =>
+          language && (
+            <li>
+              <a
+                class:list={[
+                  {
+                    active: language.languageCode === currentLocale,
+                  },
+                  "py-2.75 capitalize",
+                ]}
+                href={language.slug}>
+                {language.contentDir}
+              </a>
+            </li>
+          ),
+      )
+    }
+  </ul>
+</div>

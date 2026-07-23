@@ -1,0 +1,191 @@
+@import "./buttons.css";
+@import "./utilities.css";
+
+form.contact-form {
+  @apply prose-a:text-white/80 prose-a:underline prose-a:underline-offset-2;
+}
+
+.contact-form {
+  @apply grid grid-cols-2 gap-6;
+}
+
+.contact-form-field {
+  @apply relative flex flex-col;
+}
+
+.contact-form-field--half {
+  @apply max-sm:col-span-2 md:col-span-1;
+}
+
+.contact-form-field--full,
+.contact-form-submit,
+.contact-form-message,
+.contact-form-note {
+  @apply col-span-2;
+}
+
+.contact-form-field-label {
+  @apply text-text-inverse/70 mb-4 text-base font-medium;
+}
+
+.contact-form-native-select {
+  @apply absolute inset-0 h-full w-full opacity-0;
+  appearance: none;
+}
+
+.contact-form-control-shell {
+  @apply relative w-full border-b border-white/18 transition-colors duration-200;
+}
+
+.contact-form-field:focus-within .contact-form-control-shell,
+.contact-form-field.is-filled .contact-form-control-shell,
+.contact-form-field:focus-within .contact-form-choice-group,
+.contact-form-field.is-filled .contact-form-choice-group {
+  @apply border-white/80;
+}
+
+.contact-form-field.is-error .contact-form-control-shell,
+.contact-form-field.is-error .contact-form-choice-group {
+  @apply border-red-500;
+}
+
+.contact-form-control {
+  @apply text-text-inverse w-full border-none bg-transparent px-0 pt-2 pb-4 placeholder-white/50 ring-0 outline-none focus:ring-0 focus:outline-none;
+  caret-color: var(--color-text-inverse);
+}
+
+.contact-form-control--textarea {
+  @apply resize-none;
+}
+
+.contact-form-choice-group {
+  @apply relative flex flex-col gap-3;
+}
+
+.contact-form-choice-item {
+  @apply flex items-center gap-3;
+}
+
+.contact-form-choice-input {
+  @apply text-primary mt-0 border-white/24 bg-transparent focus:border-white/50 focus:ring-0 focus:ring-offset-0;
+}
+
+.contact-form-choice-input--radio {
+  @apply h-4 w-4;
+}
+
+.contact-form-choice-input--checkbox {
+  @apply h-5 w-5 rounded-sm;
+}
+
+.contact-form-choice-label {
+  @apply text-text-inverse/80 cursor-pointer text-sm;
+}
+
+.contact-form-choice-label a {
+  @apply underline underline-offset-2;
+}
+
+.contact-form-select-shell .hs-select {
+  @apply w-full;
+}
+
+.contact-form-select-toggle {
+  @apply text-text-inverse relative flex w-full cursor-pointer items-center gap-x-2 border-none bg-transparent px-0 pt-2 pb-4 text-left shadow-none ring-0 outline-none focus:ring-0 focus:outline-none;
+}
+
+.contact-form-select-title {
+  @apply text-text-inverse/50 transition-colors;
+}
+
+.contact-form-field:focus-within .contact-form-select-title,
+.contact-form-field.is-filled .contact-form-select-title {
+  @apply text-text-inverse;
+}
+
+.contact-form-field.is-error .contact-form-select-title,
+.contact-form-field.is-error .contact-form-select-arrow {
+  @apply text-red-300;
+}
+
+.contact-form-select-dropdown {
+  @apply bg-theme-dark z-20 mt-2 max-h-72 w-full overflow-hidden overflow-y-auto border border-white/10;
+  @apply [::-webkit-scrollbar]:w-2 [::-webkit-scrollbar-thumb]:rounded-full [::-webkit-scrollbar-thumb]:bg-white/20 [::-webkit-scrollbar-track]:bg-white/5;
+}
+
+.contact-form-select-option {
+  @apply text-text-inverse/70 w-full cursor-pointer px-4 py-2 hover:bg-white/5 focus:bg-white/10 focus:outline-none;
+}
+
+.contact-form-select-option-inner {
+  @apply flex w-full items-center justify-between;
+}
+
+.contact-form-select-selected-icon {
+  @apply text-primary;
+}
+
+.contact-form-select-arrow {
+  @apply text-text-inverse/50 pointer-events-none absolute inset-y-0 right-0 flex items-center transition-colors;
+}
+
+.contact-form-select-search-wrap {
+  @apply bg-theme-dark sticky top-0 p-1;
+}
+
+.contact-form-select-search {
+  @apply bg-theme-dark text-text-inverse placeholder:text-text-inverse/50 block w-full border-white/20 px-3 py-2 text-sm focus:border-white/50 focus:ring-0;
+}
+
+.contact-form-message {
+  @apply rounded-md border px-4 py-3 text-sm shadow-lg shadow-black/15 backdrop-blur-sm;
+}
+
+.contact-form-message.hidden {
+  @apply hidden;
+}
+
+.contact-form-message--pending {
+  @apply border-white/15 bg-white/10 text-white;
+}
+
+.contact-form-message--success {
+  @apply border-emerald-400/35 bg-emerald-400/12 text-emerald-50;
+}
+
+.contact-form-message--error {
+  @apply border-red-400/35 bg-red-400/12 text-red-50;
+}
+
+.contact-form-message--info {
+  @apply border-sky-400/35 bg-sky-400/12 text-sky-50;
+}
+
+.contact-form-message--warning {
+  @apply border-amber-400/35 bg-amber-400/12 text-amber-50;
+}
+
+.contact-form-message--hint {
+  @apply border-violet-400/35 bg-violet-400/12 text-violet-50;
+}
+
+.contact-form-message-content {
+  @apply prose-p:my-0 prose-a:text-current prose-a:underline prose-a:underline-offset-2;
+}
+
+.contact-form-note {
+  @apply prose-a:text-primary prose-a:underline prose-a:underline-offset-2 flex flex-col text-sm/normal;
+}
+
+.contact-form-control:-webkit-autofill,
+.contact-form-control:-webkit-autofill:hover,
+.contact-form-control:-webkit-autofill:focus,
+.contact-form-select-search:-webkit-autofill,
+.contact-form-select-search:-webkit-autofill:hover,
+.contact-form-select-search:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text-inverse) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-theme-dark) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-theme-dark) inset !important;
+  caret-color: var(--color-text-inverse);
+  transition: background-color 9999s ease-in-out 0s;
+}

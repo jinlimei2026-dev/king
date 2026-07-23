@@ -1,0 +1,150 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import type { heroSectionSchema } from "@/sections.schema";
+import { markdownify } from "@/lib/utils/textConverter";
+import AnimatedText from "@/components/widgets/AnimatedText.astro";
+import Button from "@/components/Button.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+type SectionType = Section & NonNullable<z.infer<typeof heroSectionSchema>>;
+type Props = { content?: SectionType };
+
+let defaultContent = (
+  await getEntryCTM("sections", "home-banner-two", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  title,
+  subtitle,
+  image,
+  imageAlt,
+  description,
+  satisfactionClients,
+  button,
+} = actualContent;
+---
+
+<section id="home" class="relative scroll-mt-28 overflow-hidden pt-0">
+  <div
+    aria-hidden="true"
+    class="bg-theme-dark/60 absolute inset-0 z-10 size-full">
+  </div>
+  <div class="absolute inset-0 size-full">
+    {
+      image && (
+        <OptimizedImage
+          src={image}
+          alt={imageAlt}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="size-full object-cover object-center"
+        />
+      )
+    }
+  </div>
+  <div class="container-2xl relative z-10">
+    <div class="mx-auto py-16 text-center md:px-20 lg:px-20 lg:py-40">
+      {
+        subtitle && (
+          <div
+            class="bg-theme-light mb-8 inline-block rounded-md px-5 py-1.75 font-semibold md:mb-8 md:text-xl"
+            data-aos="fade-down"
+            data-aos-duration="600">
+            <AnimatedText tag="span" duration={0.4} content={subtitle} />
+          </div>
+        )
+      }
+
+      {
+        title && (
+          <h1
+            class="lg:text-display-5 xl:text-display-4 text-display-6 font-bold text-white"
+            set:html={markdownify(title)}
+          />
+        )
+      }
+    </div>
+    <div
+      class="border-text-inverse/15 flex flex-wrap justify-center gap-4 py-4 max-md:flex-col md:flex-nowrap md:items-center md:justify-between md:gap-4 md:border-t md:py-8 lg:gap-8">
+      {
+        description && (
+          <p
+            data-aos="fade-up-sm"
+            data-aos-delay="600"
+            data-aos-duration="600"
+            class="text-text-inverse mx-auto w-full flex-1 text-base font-medium max-md:order-3 max-md:text-center md:mx-0 md:max-w-xs lg:w-auto xl:text-xl">
+            {markdownify(description)}
+          </p>
+        )
+      }
+
+      {
+        button && (
+          <div
+            class="w-fit max-md:order-4 max-md:mx-auto"
+            data-aos="fade-up-sm"
+            data-aos-delay="700"
+            data-aos-duration="600">
+            <Button {...button} class="btn-primary w-fit" />
+          </div>
+        )
+      }
+
+      {
+        satisfactionClients?.enable && (
+          <div
+            class="flex max-w-sm flex-1 flex-col items-center gap-6 max-lg:flex-wrap max-md:mx-auto md:items-start lg:justify-start"
+            data-aos="fade-left-sm"
+            data-aos-delay="800"
+            data-aos-duration="650">
+            <div class="flex items-center gap-3 md:justify-start lg:gap-5">
+              <div class="flex items-center">
+                {satisfactionClients.avatars?.map(
+                  (avatar: string, i: number) => (
+                    <div
+                      class:list={[
+                        "border-text-inverse size-10 overflow-hidden rounded-full border-2 lg:size-12",
+                        { "-ml-4 xl:-ml-7": i > 0 },
+                      ]}>
+                      <OptimizedImage
+                        src={avatar}
+                        alt={t("common.customerAvatar")}
+                        width={48}
+                        height={46}
+                        class="size-full object-cover"
+                      />
+                    </div>
+                  ),
+                )}
+                <div class="bg-dark border-text-inverse text-text-inverse z-10 -ml-4 flex size-10 items-center justify-center rounded-full border-2 text-3xl font-light md:text-4xl lg:size-12 lg:text-5xl xl:-ml-7">
+                  +
+                </div>
+              </div>
+              <span class="text-text-inverse xl:text-display-5 text-2xl leading-none font-bold md:text-3xl lg:text-4xl">
+                {satisfactionClients.count}
+              </span>
+            </div>
+            <span
+              class="text-text-inverse leading-tight font-medium xl:text-lg"
+              set:html={markdownify(satisfactionClients.label)}
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

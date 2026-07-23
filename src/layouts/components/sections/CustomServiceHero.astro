@@ -1,0 +1,102 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "custom-service-hero",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const {
+  backgroundImage,
+  subtitle,
+  title,
+  description,
+  buttonLabel,
+  buttonUrl,
+  statsCard,
+} = sectionData.data;
+---
+
+<section class="relative h-[80vh] min-h-150 w-full overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <OptimizedImage
+      src={backgroundImage.src}
+      alt={backgroundImage.alt}
+      class="h-full w-full object-cover"
+      width={1920}
+      height={1080}
+    />
+    <div
+      class="absolute inset-0 bg-linear-to-t from-[#0f172a] via-[#0f172a]/70 to-transparent">
+    </div>
+  </div>
+
+  <div
+    class="relative z-10 mx-auto flex h-full w-full max-w-375 flex-col justify-between px-6 pt-24 pb-20 md:pt-32 md:pb-32 lg:px-20">
+    <div class="flex w-full flex-col justify-between gap-12 lg:flex-row">
+      <div class="hidden lg:block lg:w-7/12"></div>
+      <div
+        class="flex w-full justify-start lg:w-4/12"
+        data-aos="fade-left"
+        data-aos-delay="200">
+        <div
+          class="w-72 rounded-2xl border border-white/20 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-md">
+          <div class="mb-2 flex items-start justify-between">
+            <span class="text-sm font-medium text-white/80">
+              {statsCard.label}
+            </span>
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#3b82f6] border-t-transparent text-xs font-bold">
+              {statsCard.value}
+            </div>
+          </div>
+          <p class="mb-2 text-3xl font-bold">{statsCard.value}</p>
+          <p class="text-xs leading-relaxed text-white/70">
+            {statsCard.description}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex w-full flex-col items-end justify-between gap-12 lg:flex-row">
+      <div class="w-full lg:w-7/12" data-aos="fade-up">
+        <div class="mb-6 flex items-center gap-3">
+          <div class="h-2 w-2 rounded-full bg-[#3b82f6]"></div>
+          <div class="h-px w-12 bg-[#3b82f6]"></div>
+          <span
+            class="text-xs font-bold tracking-[0.2em] text-[#3b82f6] uppercase">
+            {subtitle}
+          </span>
+        </div>
+        <h1
+          class="text-5xl leading-[1.1] font-bold tracking-tight text-white md:text-6xl lg:text-7xl">
+          {title}
+        </h1>
+      </div>
+
+      <div
+        class="flex w-full flex-col items-start lg:w-4/12"
+        data-aos="fade-up"
+        data-aos-delay="100">
+        <p class="mb-8 text-left text-lg leading-relaxed text-white/80">
+          {description}
+        </p>
+
+        <a
+          href={buttonUrl}
+          class="group inline-flex items-center gap-3 rounded-full bg-[#2563eb] px-8 py-4 font-bold text-white transition-all duration-300 hover:bg-[#1d4ed8]">
+          {buttonLabel}
+          <span
+            class="transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,199 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "about-intro",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+
+const {
+  title,
+  subtitle,
+  description,
+  buttonLabel,
+  buttonUrl,
+  stats,
+  bentoImages,
+  bentoQuotes,
+  bottomMetrics,
+} = sectionData.data;
+---
+
+<section class="w-full overflow-hidden bg-white py-24 md:py-32">
+  <div class="mx-auto max-w-375 px-6 lg:px-20">
+    <div class="flex flex-col gap-16 lg:flex-row lg:items-center lg:gap-24">
+      <div
+        class="flex w-full flex-col items-start lg:w-5/12"
+        data-aos="fade-right">
+        <div class="mb-8 flex items-center gap-3">
+          <div class="flex -space-x-1">
+            <span class="h-3 w-3 rounded-full bg-[#f8c765]"></span>
+            <span class="h-3 w-3 rounded-full bg-[#2b9bf2]"></span>
+            <span class="h-3 w-3 rounded-full bg-[#f05c35]"></span>
+            <span class="h-3 w-3 rounded-full bg-gray-300"></span>
+          </div>
+          <span
+            class="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">
+            {subtitle}
+          </span>
+        </div>
+
+        <h2
+          class="max-w-3xl text-4xl leading-[1.15] font-medium tracking-tight text-gray-900 md:text-5xl lg:text-[56px]">
+          {title}
+        </h2>
+
+        <p class="mb-8 max-w-md text-lg leading-relaxed text-gray-600">
+          {description}
+        </p>
+
+        <a
+          href={buttonUrl}
+          class="mb-16 inline-block rounded-xl bg-[#1a1a1a] px-8 py-4 font-bold text-white transition-all hover:bg-black hover:shadow-xl">
+          {buttonLabel}
+        </a>
+
+        <div class="grid w-full grid-cols-2 gap-x-8 gap-y-10">
+          {
+            stats &&
+              stats.map((stat: any) => (
+                <div class="flex flex-col">
+                  <span class="mb-2 text-2xl font-medium text-gray-900 md:text-3xl">
+                    {stat.value}
+                  </span>
+                  <span class="mb-4 text-xl font-medium text-gray-900">
+                    {stat.label}
+                  </span>
+                  <p class="max-w-[90%] text-sm leading-relaxed text-gray-500">
+                    {stat.description}
+                  </p>
+                </div>
+              ))
+          }
+        </div>
+      </div>
+
+      <div class="w-full lg:w-7/12" data-aos="fade-left">
+        <div
+          class="grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-5">
+          {
+            bentoImages[0] && (
+              <div class="col-span-1 row-span-1 overflow-hidden rounded-4xl shadow-sm">
+                <OptimizedImage
+                  src={bentoImages[0].src}
+                  alt={bentoImages[0].alt}
+                  class="h-full w-full object-cover"
+                  width={400}
+                  height={400}
+                />
+              </div>
+            )
+          }
+          {
+            bentoQuotes[0] && (
+              <div class="col-span-1 row-span-1 flex flex-col items-center justify-center rounded-4xl bg-[#f8c765] p-6 text-center shadow-sm">
+                <p class="mb-4 text-sm font-bold text-gray-900">
+                  "{bentoQuotes[0].text}"
+                </p>
+                <span class="text-xs text-gray-800">
+                  {bentoQuotes[0].author}
+                </span>
+              </div>
+            )
+          }
+          <div
+            class="col-span-1 row-span-1 rounded-full bg-[#e8e8e8] shadow-inner">
+          </div>
+
+          <div
+            class="col-span-1 row-span-1 rounded-full bg-[#e8e8e8] shadow-inner">
+          </div>
+          {
+            bentoQuotes[1] && (
+              <div class="col-span-1 row-span-1 flex flex-col items-center justify-center rounded-4xl bg-[#f05c35] p-6 text-center shadow-sm">
+                <p class="mb-4 text-sm font-bold text-white">
+                  "{bentoQuotes[1].text}"
+                </p>
+                <span class="text-xs text-white/80">
+                  {bentoQuotes[1].author}
+                </span>
+              </div>
+            )
+          }
+          {
+            bentoImages[1] && (
+              <div class="col-span-1 row-span-1 overflow-hidden rounded-4xl shadow-sm">
+                <OptimizedImage
+                  src={bentoImages[1].src}
+                  alt={bentoImages[1].alt}
+                  class="h-full w-full object-cover"
+                  width={400}
+                  height={400}
+                />
+              </div>
+            )
+          }
+
+          {
+            bentoImages[2] && (
+              <div class="col-span-1 row-span-1 overflow-hidden rounded-4xl shadow-sm md:col-span-2">
+                <OptimizedImage
+                  src={bentoImages[2].src}
+                  alt={bentoImages[2].alt}
+                  class="h-full w-full object-cover"
+                  width={800}
+                  height={400}
+                />
+              </div>
+            )
+          }
+          {
+            bentoQuotes[2] && (
+              <div class="col-span-1 row-span-1 flex flex-col items-center justify-center rounded-4xl bg-[#2b9bf2] p-6 text-center shadow-sm">
+                <p class="mb-4 text-sm font-bold text-white">
+                  "{bentoQuotes[2].text}"
+                </p>
+                <span class="text-xs text-white/80">
+                  {bentoQuotes[2].author}
+                </span>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    {
+      bottomMetrics && bottomMetrics.length > 0 && (
+        <div
+          class="mt-20 flex w-full justify-center lg:mt-32"
+          data-aos="fade-up"
+          data-aos-duration="1000">
+          <div class="flex w-full flex-wrap items-center justify-center md:flex-nowrap">
+            {bottomMetrics.map((stat: any, index: number) => (
+              <div
+                class={`relative flex aspect-square w-40 shrink-0 cursor-default flex-col items-center justify-center rounded-full transition-transform duration-500 hover:-translate-y-2 sm:w-48 md:w-[28%] ${
+                  index !== 0 ? "-ml-4 sm:-ml-8 md:-ml-[4%]" : ""
+                } ${
+                  index % 2 === 0
+                    ? "z-20 border-none bg-[#F4F4F1] shadow-sm"
+                    : "z-10 border border-gray-200 bg-white"
+                }`}>
+                <h4 class="mb-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-5xl lg:mb-2 lg:text-6xl xl:text-7xl">
+                  {stat.number}
+                </h4>
+                <p class="max-w-[65%] text-center text-[11px] leading-tight font-medium text-gray-500 sm:text-xs md:text-sm lg:text-base xl:text-lg">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</section>

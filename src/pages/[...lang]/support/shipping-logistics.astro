@@ -1,0 +1,53 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+import config from ".astro/config.generated.json";
+import { render } from "astro:content";
+import ShippingHero from "@/components/sections/ShippingHero.astro";
+import ShippingPackaging from "@/components/sections/ShippingPackaging.astro";
+import ShippingTerms from "@/components/sections/ShippingTerms.astro";
+import ShippingCTA from "@/components/sections/ShippingCTA.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang: any) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const pageData: any = await getEntryCTM(
+        "pages" as any,
+        "shipping-logistics",
+        lang.languageCode,
+      );
+
+      return {
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+        },
+        props: {
+          pageData,
+        },
+      };
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { pageData } = Astro.props;
+
+if (!pageData) return Astro.redirect("/404");
+
+const { Content } = await render(pageData);
+---
+
+<Base {...pageData.data}>
+  <ShippingHero />
+  <ShippingPackaging />
+  <ShippingTerms />
+  <ShippingCTA />
+</Base>

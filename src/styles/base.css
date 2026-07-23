@@ -1,0 +1,96 @@
+html {
+  @apply text-base-sm scroll-smooth md:text-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings:
+    "liga" 1,
+    "kern" 1;
+}
+
+body {
+  @apply font-primary text-text-default bg-body leading-normal font-normal;
+}
+
+main.has-section-gap > section {
+  @apply section-spacing;
+}
+
+.home-three main {
+  @apply px-4 xl:px-12;
+}
+.home-three .header-three {
+  @apply px-4 xl:px-12;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-text-default leading-tight;
+
+  br {
+    @apply max-lg:hidden;
+  }
+}
+
+h1 {
+  @apply text-h1;
+}
+
+h2 {
+  @apply text-h2;
+}
+
+h3 {
+  @apply text-h3;
+}
+
+h4 {
+  @apply text-h4;
+}
+
+h5 {
+  @apply text-h5;
+}
+
+h6 {
+  @apply text-h6;
+}
+
+b,
+strong {
+  @apply text-white;
+}
+
+code {
+  @apply after:border-none;
+}
+
+p {
+  br {
+    @apply max-lg:hidden;
+  }
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+* {
+  @apply border-border-light;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+section:has([data-aos]) {
+  @apply overflow-hidden;
+}

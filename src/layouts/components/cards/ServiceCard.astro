@@ -1,0 +1,111 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import { getEntrySlugCTM } from "@/lib/utils/i18nUtils";
+import Icons from "@/helpers/Icons.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  content: CollectionEntry<"products">;
+  index?: number;
+  class?: string;
+}
+
+let { content, index = 0, class: className, ...rest } = Astro.props;
+if (!content) return;
+let { title, description, image, imagePosition } = content.data || {};
+let slug =
+  content.id && content.collection
+    ? getEntrySlugCTM(content, Astro.currentLocale)
+    : undefined;
+const href = slug ? slug.replace("/services/", "/products/") : "#";
+---
+
+<div
+  class="group border-border-dark/15 relative border-b py-6 transition-colors lg:py-9"
+  data-aos="fade-up"
+  data-aos-delay={index * 80}
+  data-aos-duration="600"
+  {...rest}>
+  <div
+    class="flex flex-col gap-4 md:flex-row md:items-start lg:gap-10 xl:gap-14">
+    {/* Number */}
+
+    <div
+      class="text-text-default/70 w-auto shrink-0 pt-2 font-medium lg:pt-4 lg:text-lg">
+      {String(index + 1).padStart(3, "0")}
+    </div>
+
+    <div class="relative z-10 flex flex-1 flex-col justify-center">
+      <h3 class="text-h3-sm md:text-h3 font-bold transition-colors">
+        {title}
+      </h3>
+
+      <div
+        class:list={[
+          "grid transition-[grid-template-rows] duration-500 ease-in-out",
+
+          index === 0
+            ? "grid-rows-[1fr] lg:group-hover:grid-rows-[1fr]! lg:group-hover/list:grid-rows-[0fr]"
+            : "grid-rows-[0fr] max-lg:grid-rows-[1fr] lg:group-hover:grid-rows-[1fr]",
+        ]}>
+        <div class="overflow-hidden">
+          <p
+            class="text-text-default/70 pt-4 pb-5 lg:max-w-110 lg:pt-6.5 lg:text-lg xl:max-w-140 xl:leading-7"
+            set:html={markdownify(description || "")}
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-10 mt-2 flex shrink-0 lg:mt-2.5">
+      <a
+        href={href}
+        aria-label={title}
+        class:list={[
+          "flex h-10 w-15 items-center justify-center rounded-sm border transition-all duration-300",
+
+          index === 0
+            ? "border-primary bg-primary lg:group-hover/list:border-border-dark/20 lg:group-hover/list:text-dark lg:group-hover:border-primary! lg:group-hover:bg-primary! text-white lg:group-hover:text-white! lg:group-hover/list:bg-transparent"
+            : "border-border-dark/20 text-dark max-lg:border-primary max-lg:bg-primary lg:group-hover:border-primary lg:group-hover:bg-primary max-lg:text-white lg:group-hover:text-white",
+        ]}>
+        <Icons icon="ArrowRight" class="stroke-1.5 h-5 w-5" />
+      </a>
+    </div>
+  </div>
+
+  {
+    image && (
+      <div
+        class:list={[
+          "pointer-events-none absolute right-28 z-20 hidden w-80 transform overflow-hidden rounded-xl shadow-2xl transition-all duration-600 lg:block xl:right-41 xl:h-115.75 xl:w-97.5",
+
+          {
+            "top-8.5": imagePosition === "top" || !imagePosition,
+
+            "bottom-8.5": imagePosition === "bottom",
+
+            "top-1/2 -translate-y-1/2": imagePosition === "center",
+          },
+
+          index === 0
+            ? "scale-100 opacity-100 group-hover:scale-100! group-hover:opacity-100! group-hover/list:scale-95 group-hover/list:opacity-0"
+            : "scale-95 opacity-0 delay-75 group-hover:scale-100 group-hover:opacity-100",
+        ]}>
+        <OptimizedImage
+          src={image}
+          alt={title}
+          width={350}
+          height={437}
+          class="h-full w-full object-cover"
+        />
+      </div>
+    )
+  }
+
+  <a
+    href={href}
+    class="absolute inset-0 z-10 hidden size-full lg:block"
+    aria-hidden="true">
+  </a>
+</div>

@@ -1,0 +1,76 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+import config from ".astro/config.generated.json";
+import CaseHero from "@/layouts/components/sections/CaseHero.astro";
+import SupportFaq from "@/layouts/components/sections/SupportFaq.astro";
+import Button from "@/components/Button.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang: any) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+      const heroData: any = await getEntryCTM(
+        "sections" as any,
+        "faq-hero",
+        lang.languageCode,
+      );
+      const listData: any = await getEntryCTM(
+        "sections" as any,
+        "faq-list",
+        lang.languageCode,
+      );
+
+      return {
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+        },
+        props: { heroData, listData },
+      };
+    }),
+  );
+  return paths.flat();
+}
+
+const { heroData, listData } = Astro.props;
+
+const seoData = {
+  enable: true,
+  title: "FAQ | Frequently Asked Questions",
+  description:
+    "Find answers to your questions regarding our products, manufacturing, and shipping processes.",
+};
+---
+
+<Base {...seoData}>
+  <CaseHero
+    subtitle={heroData?.data?.subtitle}
+    title={heroData?.data?.title}
+    description={heroData?.data?.description}
+    bgImage={heroData?.data?.bgImage}
+  />
+
+  <SupportFaq
+    title={listData?.data?.title}
+    description={listData?.data?.description}
+    faqs={listData?.data?.faqs}
+  />
+
+  {
+    listData?.data?.button && listData.data.button.enable && (
+      <section class="pt-4 pb-24 text-center">
+        <div class="container mx-auto px-6" data-aos="fade-up">
+          <Button
+            {...listData.data.button}
+            class="inline-flex px-10 py-4 text-lg font-semibold shadow-lg transition-transform hover:-translate-y-1"
+          />
+        </div>
+      </section>
+    )
+  }
+</Base>

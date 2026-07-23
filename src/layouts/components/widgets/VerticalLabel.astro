@@ -1,0 +1,165 @@
+---
+type Props = {
+  text: string;
+  class?: string;
+  tag?: keyof HTMLElementTagNameMap;
+  ariaHidden?: boolean;
+  scramble?: boolean;
+  scrambleDelay?: number;
+};
+
+const {
+  text,
+  class: className,
+  tag = "div",
+  ariaHidden = true,
+  scramble = true,
+  scrambleDelay = 300,
+} = Astro.props as Props;
+
+const normalizedPath = Astro.url.pathname.replace(/^\/+|\/+$/g, "");
+const isHomepage =
+  normalizedPath === "" || normalizedPath === (Astro.currentLocale ?? "");
+const shouldScramble = scramble && !isHomepage;
+const Tag = tag;
+const classes = [
+  "lg:[text-orientation:mixed] hidden lg:block lg:absolute lg:[writing-mode:vertical-rl] lg:pointer-events-none leading-none lg:text-text-default/7 lg:text-display-2 font-semibold uppercase lg:-z-1 lg:h-full",
+  shouldScramble && "lg:opacity-0 transition-opacity duration-300 ease-out",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Tag
+  class={classes}
+  aria-hidden={ariaHidden ? "true" : undefined}
+  data-vertical-label={shouldScramble ? "scramble" : undefined}
+  data-vertical-label-text={shouldScramble ? text : undefined}
+  data-vertical-label-delay={shouldScramble ? String(scrambleDelay) : undefined}>
+  {text}
+</Tag>
+
+{
+  shouldScramble && (
+    <script>
+      (() => {
+        const verticalLabelWindow = window as Window & {
+          __verticalLabelScrambleInit?: boolean;
+        };
+
+        if (verticalLabelWindow.__verticalLabelScrambleInit) return;
+        verticalLabelWindow.__verticalLabelScrambleInit = true;
+
+        const SCRAMBLE_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const SCRAMBLE_FRAMES_PER_CHAR = 5.5;
+        const SCRAMBLE_MIN_FRAMES = 32;
+        const OBSERVER_THRESHOLD = 0.35;
+        const OBSERVER_ROOT_MARGIN = "0px 0px -15% 0px";
+        const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";
+
+        const scrambleText = (element: HTMLElement) => {
+          const finalText =
+            element.dataset.verticalLabelText || element.textContent;
+          if (!finalText || element.dataset.verticalLabelAnimated === "true") {
+            return;
+          }
+
+          element.dataset.verticalLabelAnimated = "true";
+          element.style.opacity = "1";
+
+          let frame = 0;
+          const totalFrames = Math.max(
+            finalText.length * SCRAMBLE_FRAMES_PER_CHAR,
+            SCRAMBLE_MIN_FRAMES,
+          );
+
+          const tick = () => {
+            const progress = frame / totalFrames;
+
+            element.textContent = finalText
+              .split("")
+              .map((char: string, index: number) => {
+                if (char === " " || /[^A-Za-z0-9]/.test(char)) return char;
+                if (index < progress * finalText.length) return finalText[index];
+                return SCRAMBLE_CHARSET[
+                  Math.floor(Math.random() * SCRAMBLE_CHARSET.length)
+                ];
+              })
+              .join("");
+
+            frame += 1;
+
+            if (frame <= totalFrames) {
+              window.requestAnimationFrame(tick);
+            } else {
+              element.textContent = finalText;
+            }
+          };
+
+          tick();
+        };
+
+        const initVerticalLabels = () => {
+          const labels = document.querySelectorAll<HTMLElement>(
+            "[data-vertical-label='scramble']",
+          );
+          if (!labels.length) return;
+
+          const isDesktop = window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
+          const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+
+          if (!isDesktop) return;
+
+          if (prefersReducedMotion) {
+            labels.forEach((label) => {
+              label.textContent =
+                label.dataset.verticalLabelText || label.textContent;
+              label.dataset.verticalLabelAnimated = "true";
+              label.style.opacity = "1";
+            });
+            return;
+          }
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const target = entry.target;
+                if (!(target instanceof HTMLElement)) return;
+                const delay = Number(
+                  target.dataset.verticalLabelDelay || "0",
+                );
+
+                window.setTimeout(() => {
+                  scrambleText(target);
+                }, delay);
+                observer.unobserve(target);
+              });
+            },
+            {
+              threshold: OBSERVER_THRESHOLD,
+              rootMargin: OBSERVER_ROOT_MARGIN,
+            },
+          );
+
+          labels.forEach((label) => {
+            if (label.dataset.verticalLabelObserved === "true") return;
+            label.dataset.verticalLabelObserved = "true";
+            observer.observe(label);
+          });
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initVerticalLabels, {
+            once: true,
+          });
+        } else {
+          initVerticalLabels();
+        }
+      })();
+    </script>
+  )
+}

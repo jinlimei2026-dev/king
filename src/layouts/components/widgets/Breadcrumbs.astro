@@ -1,0 +1,99 @@
+---
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import { humanize } from "@/lib/utils/textConverter";
+
+interface Props {
+  class?: string;
+  variant?: "primary" | "default";
+  hiddenPaths?: string[];
+  title?: string;
+  pathname?: string;
+}
+
+const {
+  hiddenPaths,
+  class: className,
+  variant = "default",
+  title,
+  pathname,
+  ...rest
+} = Astro.props;
+
+const createBreadcrumbParts = (pathname: string) => {
+  let segments = pathname.split("/").filter((segment) => segment);
+
+  if (segments[0] === Astro.currentLocale) {
+    segments = segments.slice(1);
+  }
+
+  const breadcrumbParts = [
+    {
+      label: "Home",
+      href: getLocaleUrlCTM("/", Astro.currentLocale),
+      "aria-label": pathname === "/" ? "page" : undefined,
+    },
+  ];
+
+  segments.forEach((segment, index) => {
+    if (segment === "category") return;
+    const href = getLocaleUrlCTM(
+      `/${segments.slice(0, index + 1).join("/")}`,
+      Astro.currentLocale,
+    );
+    if (segment !== "page") {
+      breadcrumbParts.push({
+        label:
+          humanize(segment.replace(".html", "").replace(/[-_]/g, " ")) || "",
+        href,
+        "aria-label": pathname === href ? "page" : undefined,
+      });
+    }
+  });
+
+  return breadcrumbParts;
+};
+
+let breadcrumbParts = createBreadcrumbParts(pathname || Astro.url.pathname);
+
+if (title && breadcrumbParts.length > 0) {
+  breadcrumbParts[breadcrumbParts.length - 1].label = title;
+}
+
+if (hiddenPaths && hiddenPaths.length > 0) {
+  breadcrumbParts = breadcrumbParts.map((part) => {
+    return {
+      ...part,
+      href: !hiddenPaths?.includes(part.label) ? part.href : "",
+    };
+  });
+}
+---
+
+<nav aria-label="Breadcrumb" class:list={[className]} {...rest}>
+  <ol
+    class="inline-flex flex-wrap items-center justify-center gap-1 gap-y-3"
+    role="list">
+    {
+      breadcrumbParts.map(({ label, ...attrs }, index) => {
+        const isLast = index === breadcrumbParts.length - 1;
+        return (
+          <li
+            class={`${variant === "primary" ? "text-text-default" : "text-text-inverse"} inline-flex items-center gap-1 text-lg capitalize`}
+            role="listitem">
+            {index > 0 && <span aria-hidden="true">/</span>}
+            {!isLast && attrs.href !== "" ? (
+              <a class="transition-colors" {...attrs}>
+                {label}
+              </a>
+            ) : (
+              <span
+                class={`font-semibold ${variant === "primary" ? "text-primary" : "underline"}`}
+                set:html={label}
+              />
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>

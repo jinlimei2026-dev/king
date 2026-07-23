@@ -1,0 +1,23 @@
+---
+import Base from "@/layouts/Base.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import ContactSection from "@/components/sections/ContactSection.astro";
+import PageHeader from "@/layouts/components/widgets/PageHeader.astro";
+import ServiceListSection from "@/components/sections/ServiceListSection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const services = await getEntryCTM("products", "-index", Astro.currentLocale);
+---
+
+<Base {...services.data}>
+  <PageHeader
+    title={services.data.title}
+    breadcrumbTitle={services?.data?.breadcrumbTitle}
+  />
+  <ServiceListSection />
+  <ContactSection />
+</Base>

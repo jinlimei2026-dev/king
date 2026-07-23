@@ -1,0 +1,121 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import Icons from "@/helpers/Icons.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const entry = await getEntryCTM(
+  "sections",
+  "product-showcase",
+  Astro.currentLocale,
+);
+const actualContent = entry?.data;
+
+if (!actualContent || !actualContent.enable) return;
+
+const { title, description, products } = actualContent;
+---
+
+<section
+  class="section-spacing-vertical bg-theme-light/20 relative overflow-hidden">
+  <div class="container">
+    <div
+      class="mb-16 text-center md:mb-24"
+      data-aos="fade-up"
+      data-aos-duration="600">
+      {title && <SectionTitle title={title} />}
+      {
+        description && (
+          <p class="text-text-default/70 mx-auto mt-5 max-w-3xl text-lg leading-relaxed md:text-xl">
+            {description}
+          </p>
+        )
+      }
+    </div>
+
+    <div class="flex flex-col gap-20 lg:gap-32">
+      {
+        products &&
+          products.map((item: any, index: number) => (
+            <div
+              class={`flex flex-col gap-10 lg:items-center lg:gap-16 ${index % 2 !== 0 ? "lg:flex-row-reverse" : "lg:flex-row"}`}>
+              <div
+                class="group relative w-full lg:w-1/2"
+                data-aos={index % 2 !== 0 ? "fade-left" : "fade-right"}
+                data-aos-duration="800">
+                <a
+                  href={item.link}
+                  class="bg-dark/5 block aspect-4/3 overflow-hidden rounded-2xl shadow-xl md:aspect-16/10">
+                  <OptimizedImage
+                    src={item.image}
+                    alt={item.title}
+                    width={800}
+                    height={600}
+                    class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div class="bg-dark/10 absolute inset-0 transition-opacity duration-300 group-hover:opacity-0" />
+                </a>
+              </div>
+
+              <div
+                class="flex w-full flex-col justify-center lg:w-1/2"
+                data-aos="fade-up"
+                data-aos-delay="200"
+                data-aos-duration="800">
+                <div class="mb-6 flex flex-wrap gap-3">
+                  {item.features &&
+                    item.features.map((feat: string) => (
+                      <span class="bg-dark/5 text-dark/80 inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold tracking-wider uppercase md:text-sm">
+                        <Icons
+                          icon="Check"
+                          fill={"#000000"}
+                          class="size-3.5 opacity-70"
+                        />
+                        {feat}
+                      </span>
+                    ))}
+                </div>
+
+                <h3 class="text-dark mb-3 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl lg:leading-tight">
+                  {item.title}
+                </h3>
+                <h4 class="text-primary mb-6 text-lg font-medium md:text-xl">
+                  {item.subtitle}
+                </h4>
+
+                <p class="text-text-default/80 mb-10 text-base leading-relaxed md:text-lg">
+                  {item.seoDescription}
+                </p>
+
+                <div>
+                  <a
+                    href={item.link}
+                    class="group text-dark hover:text-primary inline-flex items-center gap-3 font-bold transition-colors">
+                    <span class="decoration-border-dark/30 group-hover:decoration-primary text-lg underline decoration-2 underline-offset-8 transition-all">
+                      Explore Specifications
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="transition-transform duration-300 group-hover:translate-x-2">
+                      <>
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</section>

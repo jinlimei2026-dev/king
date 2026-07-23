@@ -1,0 +1,74 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+
+const sectionData = await getEntryCTM(
+  "sections",
+  "about-hero",
+  Astro.currentLocale,
+);
+
+if (!sectionData || !sectionData.data.enable) return null;
+const { subtitle, title, description, bgImage, badges } = sectionData.data;
+---
+
+<section
+  class="relative flex min-h-[70vh] w-full items-center justify-center overflow-hidden bg-gray-900 pt-32 pb-24">
+  {
+    bgImage && (
+      <div class="absolute inset-0 z-0">
+        <OptimizedImage
+          src={bgImage}
+          alt="About Us Background"
+          class="h-full w-full object-cover opacity-60 mix-blend-luminosity"
+          width={1920}
+          height={1080}
+        />
+        <div class="to-gray-0 absolute inset-0 bg-linear-to-b from-gray-900/10 via-gray-900/40" />
+      </div>
+    )
+  }
+
+  <div
+    class="relative z-10 mx-auto w-full max-w-375 px-6 text-center md:px-12 lg:px-20">
+    <div class="mb-6 flex justify-center" data-aos="fade-down">
+      <span
+        class="inline-flex items-center gap-3 rounded-full border border-blue-500/30 bg-blue-500/10 px-6 py-2 text-xs font-bold tracking-[0.3em] text-blue-400 uppercase backdrop-blur-sm">
+        <span class="h-2 w-2 animate-pulse rounded-full bg-blue-500"></span>
+        {subtitle}
+      </span>
+    </div>
+
+    <h1
+      class="mx-auto mb-8 max-w-4xl text-5xl leading-[1.05] font-black tracking-tighter text-white md:text-6xl lg:text-[80px]"
+      data-aos="fade-up"
+      data-aos-delay="100">
+      {title}
+    </h1>
+
+    <p
+      class="mx-auto max-w-3xl text-lg leading-relaxed font-medium text-gray-300 md:text-xl"
+      data-aos="fade-up"
+      data-aos-delay="200">
+      {description}
+    </p>
+
+    {
+      badges && badges.length > 0 && (
+        <div
+          class="mt-16 flex flex-wrap items-center justify-center gap-4 md:gap-8"
+          data-aos="fade-up"
+          data-aos-delay="300">
+          {badges.map((badge: any) => (
+            <div class="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 backdrop-blur-md transition-colors hover:border-blue-500/50 hover:bg-white/10">
+              <span class="text-blue-400" set:html={badge.icon} />
+              <span class="text-sm font-bold tracking-wide text-white">
+                {badge.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

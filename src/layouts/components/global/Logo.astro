@@ -1,0 +1,70 @@
+---
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { markdownify, toSentenceCase } from "@/lib/utils/textConverter";
+
+import config from ".astro/config.generated.json";
+
+const getNumber = (value: string) => {
+  const base = 16;
+  const updatedValue = value.replace("px", "").replace("rem", "");
+  let valueAsNumber = Number(updatedValue);
+  if (value.includes("rem")) {
+    return (valueAsNumber = Number(updatedValue) * base);
+  }
+
+  return valueAsNumber;
+};
+
+type Props = {
+  src?: string;
+  class?: string;
+  variant?: "blue" | "white";
+};
+
+let { src, class: className, variant = "white" } = Astro.props;
+
+let {
+  logo,
+  logoWhite,
+  logoWidth = "29px",
+  logoHeight = "29px",
+  logoText,
+  title,
+} = config.site;
+---
+
+<a
+  href={getLocaleUrlCTM("/", Astro.currentLocale)}
+  class:list={["logo-wrapper", className]}>
+  {
+    src || logo || logoWhite ? (
+      <>
+        <OptimizedImage
+          src={src ? src : variant === "blue" ? logoWhite : logo}
+          class="logo"
+          width={getNumber(logoWidth)}
+          height={getNumber(logoHeight)}
+          alt={toSentenceCase("Brand logo of " + title)}
+          loading="eager"
+          decoding="async"
+          style={{
+            height: getNumber(logoHeight) + "px",
+            width: getNumber(logoWidth) + "px",
+          }}
+        />
+
+        {logoText && (
+          <span
+            class={`logo-text ${variant === "blue" && "text-white"}`}
+            set:html={markdownify(logoText)}
+          />
+        )}
+      </>
+    ) : logoText ? (
+      logoText
+    ) : (
+      title
+    )
+  }
+</a>

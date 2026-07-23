@@ -1,0 +1,93 @@
+[site]
+  title            = "Kingsenda"
+  description      = "Kingsenda is a premier B2B manufacturer specializing in high-quality glass wool felt and rubber-plastic pipe insulation materials. Backed by our strategic Hebei manufacturing base, we offer agile supply and flexible stock rotation for global distributors."
+  tagline          = "Premium Insulation Materials Direct from Manufacturer"
+  taglineSeparator = " | "
+  baseUrl          = "https://www.kingsendainsulation.com"
+  logo             = "/images/logo.png"
+  logoWhite        = "/images/logo-white.png"
+  logoText         = "Kingsenda"
+  logoWidth        = "30px"
+  logoHeight       = "30px"
+
+  trailingSlash = true
+
+  [site.favicon]
+    image = "/images/logo.png"
+
+[seo]
+  author = "Hebei Kingsenda"
+  keywords = [
+    "glass wool felt",
+    "rubber plastic pipe",
+    "insulation materials",
+    "Kingsenda insulation",
+    "HVAC insulation manufacturer",
+  ]
+  robots = "index, follow"
+
+  [seo.robotsTxt]
+    enable   = true
+    disallow = []
+
+  [seo.sitemap]
+    enable  = true
+    exclude = []
+
+[contact]
+  location = "Operations: Zhihui Creative Mansion, Bao'an, Shenzhen | Manufacturing Base: Hebei, China"
+  phone    = "+86 15909713999"
+  email    = "jinlimei@kingsendainsulation.com"
+
+[settings]
+  blogFolder        = "blog"
+  servicesFolder    = "products"
+  caseStudiesFolder = "case-studies"
+
+  pagination   = 6
+  stickyHeader = true
+
+  contactFormAction   = "https://formsubmit.co/jinlimei@kingsendainsulation.com"
+  contactFormProvider = "formsubmit.co"
+
+  footerDescription = "Delivering superior thermal and acoustic insulation solutions globally. We empower independent retailers and large distributors with premium products and flexible inventory policies."
+
+  [settings.copyright]
+    enable = true
+    text   = "Copyright © 2026 Hebei Kingsenda. All Rights Reserved."
+
+  [settings.subscription]
+    enable     = true
+    title      = "Get Our Latest Catalog"
+    formAction = "https://formsubmit.co/jinlimei@kingsendainsulation.com"
+
+  [settings.multilingual]
+    disableLanguages     = ["fr"]
+    enable               = false
+    defaultLanguage      = "en"
+    showDefaultLangInUrl = false
+
+  [settings.navigationButton]
+    enable = true
+    label  = "Get a Quote"
+    url    = "/contact/"
+
+  [settings.announcementBar]
+    enable = false
+
+  [settings.markup.tableOfContents]
+    enable     = true
+    expanded   = true
+    endLevel   = 5
+    ordered    = false
+    startLevel = 1
+
+[opengraph]
+  image       = "/images/og-image.jpg"
+  ogLocale    = "en_US"
+  ogType      = "website"
+  twitter     = ""
+  twitterCard = "summary_large_image"
+
+[head]
+  content = ""

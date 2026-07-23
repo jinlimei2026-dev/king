@@ -1,0 +1,47 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+import AnimatedText from "../widgets/AnimatedText.astro";
+
+interface Props {
+  title: string;
+  variant?: "dark" | "light";
+  class?: string;
+  animated?: boolean;
+  duration?: number;
+  delay?: number;
+  stagger?: number;
+}
+
+const {
+  title,
+  variant = "light",
+  class: className = "",
+  animated = true,
+  duration = 0.7,
+  delay = 0.1,
+  stagger = 0.06,
+} = Astro.props;
+
+const sharedClass = [
+  variant === "dark" ? "text-text-inverse" : "text-text-default",
+  "text-h2-sm md:text-h2 font-semibold",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  animated ? (
+    <AnimatedText
+      tag="h2"
+      class={sharedClass}
+      duration={duration}
+      delay={delay}
+      stagger={stagger}
+      content={markdownify(title) as string}
+    />
+  ) : (
+    <h2 class={sharedClass} set:html={markdownify(title)} />
+  )
+}

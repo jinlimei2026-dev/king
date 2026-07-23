@@ -1,0 +1,128 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+import type { IconName as SupportedIconName } from "../../lib/iconNames.ts";
+import ArrowRight from "lucide/dist/esm/icons/arrow-right.js";
+import ArrowUp from "lucide/dist/esm/icons/arrow-up.js";
+import ArrowUpRight from "lucide/dist/esm/icons/arrow-up-right.js";
+import ChevronDown from "lucide/dist/esm/icons/chevron-down.js";
+import ChevronLeft from "lucide/dist/esm/icons/chevron-left.js";
+import ChevronRight from "lucide/dist/esm/icons/chevron-right.js";
+import ChevronUp from "lucide/dist/esm/icons/chevron-up.js";
+import ChevronsRight from "lucide/dist/esm/icons/chevrons-right.js";
+import Clock from "lucide/dist/esm/icons/clock.js";
+import Diamond from "lucide/dist/esm/icons/diamond.js";
+import Languages from "lucide/dist/esm/icons/languages.js";
+import Link from "lucide/dist/esm/icons/link.js";
+import MailOpen from "lucide/dist/esm/icons/mail-open.js";
+import MessageCircle from "lucide/dist/esm/icons/message-circle.js";
+import Minus from "lucide/dist/esm/icons/minus.js";
+import MoveLeft from "lucide/dist/esm/icons/move-left.js";
+import MoveRight from "lucide/dist/esm/icons/move-right.js";
+import Phone from "lucide/dist/esm/icons/phone.js";
+import Play from "lucide/dist/esm/icons/play.js";
+import Plus from "lucide/dist/esm/icons/plus.js";
+import Search from "lucide/dist/esm/icons/search.js";
+import Send from "lucide/dist/esm/icons/send.js";
+import Star from "lucide/dist/esm/icons/star.js";
+import TriangleRight from "lucide/dist/esm/icons/triangle-right.js";
+import X from "lucide/dist/esm/icons/x.js";
+
+interface Props {
+  icon: SupportedIconName;
+  [key: string]: any;
+}
+
+type IconNode = [
+  "path" | "polyline" | "polygon" | "line" | "circle" | "rect",
+  Record<string, string | number>,
+];
+
+const { icon, title, ...restProps } = Astro.props;
+const iconKey = (icon || "").toString().toLowerCase();
+const socialKeys = new Set([
+  "facebook",
+  "twitter",
+  "twitter-old",
+  "twitter-new",
+  "linkedin",
+  "instagram",
+  "github",
+  "youtube",
+  "pinterest",
+  "dribbble",
+]);
+
+const iconMap: Record<string, IconNode[]> = {
+  arrowright: ArrowRight,
+  arrowup: ArrowUp,
+  arrowupright: ArrowUpRight,
+  chevrondown: ChevronDown,
+  chevronleft: ChevronLeft,
+  chevronright: ChevronRight,
+  chevronup: ChevronUp,
+  chevronsright: ChevronsRight,
+  clock: Clock,
+  diamond: Diamond,
+  languages: Languages,
+  link: Link,
+  mailopen: MailOpen,
+  messagecircle: MessageCircle,
+  minus: Minus,
+  moveleft: MoveLeft,
+  moveright: MoveRight,
+  phone: Phone,
+  play: Play,
+  plus: Plus,
+  search: Search,
+  send: Send,
+  star: Star,
+  triangleright: TriangleRight,
+  x: X,
+};
+
+const inlineIcon = iconMap[iconKey];
+---
+
+{
+  socialKeys.has(iconKey) ? (
+    <SocialIcon name={icon as string} title={title} {...restProps} />
+  ) : inlineIcon ? (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden={title ? "false" : "true"}
+      role={title ? "img" : "presentation"}
+      {...restProps}>
+      {title && <title>{title}</title>}
+      {inlineIcon.map(([tag, attrs]) =>
+        tag === "path" ? (
+          <path {...attrs} />
+        ) : tag === "polyline" ? (
+          <polyline {...attrs} />
+        ) : tag === "polygon" ? (
+          <polygon {...attrs} />
+        ) : tag === "line" ? (
+          <line {...attrs} />
+        ) : tag === "circle" ? (
+          <circle {...attrs} />
+        ) : (
+          <rect {...attrs} />
+        ),
+      )}
+    </svg>
+  ) : (
+    <div
+      data-lucide={icon}
+      data-lucide-title={title}
+      aria-hidden={title ? "false" : "true"}
+      role={title ? "img" : "presentation"}
+      {...restProps}
+    />
+  )
+}

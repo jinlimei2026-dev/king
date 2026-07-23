@@ -1,0 +1,98 @@
+{
+  "name": "kingsenda",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "kingsenda B2B website",
+  "author": "Hebei Kingsenda",
+  "license": "UNLICENSED",
+  "private": true,
+  "keywords": [
+    "kingsenda",
+    "insulation materials",
+    "glass wool",
+    "rubber plastic pipe",
+    "b2b"
+  ],
+  "scripts": {
+    "dev": "npm run toml:watch -- --watch & astro dev",
+    "build": "npm run toml:watch && astro build && npm run remove-draft-from-sitemap",
+    "preview": "astro build && npm run remove-draft-from-sitemap && astro preview",
+    "astro-check": "astro check",
+    "toml:watch": "node scripts/toml-watcher.mjs",
+    "generate-favicons": "node ./scripts/generate-favicons.mjs",
+    "remove-multilingual": "node ./scripts/remove-multilingual.mjs",
+    "generate-multilingual-content": "node ./scripts/generate-multilingual-content.mjs",
+    "remove-draft-from-sitemap": "node ./scripts/remove-draft-from-sitemap.mjs",
+    "format": "prettier -w ./src",
+    "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch",
+    "deploy:cf": "wrangler pages deploy"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.7.6",
+    "@preline/dropdown": "^4.1.3",
+    "@preline/select": "^4.1.3",
+    "@preline/overlay": "^4.1.3",
+    "aos": "^2.3.4",
+    "date-fns": "^4.1.0",
+    "lucide": "^1.7.0",
+    "marked": "^17.0.6",
+    "motion": "^12.38.0",
+    "preline": "^4.1.3",
+    "smoothscroll-for-websites": "^1.5.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.2",
+    "@astrojs/mdx": "^5.0.3",
+    "@astrojs/sitemap": "3.7.2",
+    "@realfavicongenerator/generate-favicon": "^0.8.0",
+    "@realfavicongenerator/image-adapter-node": "^0.8.0",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.3",
+    "astro-auto-import": "^0.5.1",
+    "gray-matter": "^4.0.3",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "prettier-plugin-toml": "2.0.3",
+    "prop-types": "^15.8.1",
+    "rehype-external-links": "^3.0.0",
+    "remark-toc": "^9.0.0",
+    "sharp": "^0.34.5",
+    "slugify": "^1.6.9",
+    "tailwindcss": "^4.2.2",
+    "toml": "^4.1.1",
+    "typescript": "^5.9.3",
+    "unist-util-visit": "^5.1.0",
+    "xml2js": "^0.6.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob": "^13.0.6",
+      "inflight": "^1.0.7",
+      "minimatch@<3.1.3": ">=3.1.3",
+      "rollup@>=4.0.0 <4.59.0": ">=4.59.0",
+      "minimatch@<3.1.4": ">=3.1.4",
+      "ajv@>=7.0.0-alpha.0 <8.18.0": ">=8.18.0",
+      "h3@<1.15.6": ">=1.15.6",
+      "h3@<1.15.9": ">=1.15.9",
+      "h3@<=1.15.8": ">=1.15.9",
+      "smol-toml@<1.6.1": ">=1.6.1",
+      "brace-expansion@<1.1.13": ">=1.1.13",
+      "picomatch@<2.3.2": ">=2.3.2",
+      "picomatch@>=4.0.0 <4.0.4": ">=4.0.4",
+      "yaml@>=2.0.0 <2.8.3": ">=2.8.3",
+      "defu@<=6.1.4": ">=6.1.5",
+      "prettier-plugin-toml": "2.0.3"
+    }
+  },
+  "overrides": {
+    "vite": "^7",
+    "yaml": "^2.8.3",
+    "prettier-plugin-toml": "2.0.3"
+  }
+}

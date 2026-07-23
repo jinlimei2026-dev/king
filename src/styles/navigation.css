@@ -1,0 +1,220 @@
+.header {
+  @apply relative z-30 w-full;
+
+  &.sticky-header {
+    @apply sticky top-0 z-50 bg-white transition-[transform,opacity,border-color,background] duration-500;
+  }
+
+  &.scroll-up {
+    .hs-dropdown-menu.mega-menu {
+      @apply pointer-events-auto;
+    }
+  }
+
+  &.scroll-down,
+  &.scroll-up {
+    @apply border-transparent bg-white;
+
+    > .container > nav {
+      @apply rounded-full border bg-white/90 px-2 py-2 backdrop-blur-md;
+    }
+  }
+}
+
+.logo-wrapper {
+  @apply flex items-center gap-2.5;
+
+  .logo {
+    @apply flex w-10 items-center gap-x-4;
+  }
+
+  &.has-hover-animation {
+    @apply prose-img:duration-300 prose-img:transform prose-img:transition prose-img:ease-in;
+
+    &:hover img {
+      @apply animate-spin;
+    }
+  }
+
+  .logo-text {
+    @apply text-2xl font-semibold capitalize xl:pb-1;
+  }
+}
+
+header {
+  .logo {
+    @apply inline-block;
+  }
+
+  .logo-alternate {
+    @apply hidden;
+  }
+  .logo-text {
+    @apply text-text-default;
+  }
+}
+
+footer {
+  .logo-wrapper {
+    .logo-text {
+      @apply text-h4 text-text-default font-medium;
+    }
+
+    &.logo-alternate {
+      @apply hidden;
+    }
+  }
+}
+
+.header .language-switcher,
+.header-two .language-switcher,
+.header-three .language-switcher {
+  @apply text-primary relative rounded-sm border;
+
+  .language-switcher-button {
+    @apply flex items-center gap-1.5 px-6 py-3 text-inherit uppercase;
+
+    svg * {
+      @apply stroke-current!;
+    }
+  }
+
+  .language-switcher-dropdown {
+    @apply hs-dropdown-open:opacity-100 absolute top-full right-0 w-full min-w-32 space-y-px border bg-white p-px opacity-0 transition-[opacity,margin] lg:transform-none!;
+
+    li a {
+      @apply text-text-default block w-full text-center transition;
+
+      &.active {
+        @apply text-primary border-transparent;
+      }
+    }
+  }
+}
+.header-two .language-switcher {
+  @apply xl:py-0.75;
+}
+.header-three .language-switcher {
+  @apply lg:rounded-full xl:py-0.75;
+}
+
+.navbar {
+  @apply flex max-h-[80vh] lg:relative lg:mx-auto lg:items-center lg:bg-transparent;
+  @apply max-lg:hs-dropdown-open:opacity-100 transform-none! max-lg:top-full max-lg:z-40 max-lg:hidden max-lg:w-full max-lg:flex-col max-lg:space-y-1 max-lg:border max-lg:bg-white max-lg:p-2 max-lg:opacity-0 max-lg:transition-[margin,opacity] max-lg:will-change-[opacity,margin-top];
+
+  @media (max-width: 1023px) {
+    max-height: calc(100dvh - var(--header-bottom, 88px) - 0.75rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-item {
+    @apply relative;
+    > .nav-link {
+      @apply flex items-center px-3 py-1.5 tracking-wide transition-all duration-300 lg:py-3 xl:px-4;
+    }
+  }
+
+  .nav-dropdown-link,
+  .nav-link {
+    @apply md:text-base-sm text-text-default hs-dropdown-open:text-primary hover:text-primary font-medium;
+    &.active {
+      @apply text-primary bg-slate-50 font-medium;
+    }
+  }
+
+  .mega-menu a.active {
+    @apply text-primary bg-slate-50;
+  }
+
+  .mega-menu {
+    @apply shadow-[0_28px_80px_-56px_rgba(15,23,42,0.45)];
+
+    @media (max-width: 1023px) {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .mega-menu-link.active {
+      @apply border-slate-200/90 bg-white shadow-[0_10px_30px_-24px_rgba(15,23,42,0.3)];
+    }
+  }
+
+  [data-icon="arrow-down"] * {
+    @apply stroke-current!;
+  }
+
+  .nav-dropdown {
+    .nav-dropdown-toggle {
+      @apply hs-dropdown-open:text-primary cursor-pointer rounded-sm select-none;
+
+      svg {
+        @apply inline-block;
+      }
+    }
+
+    .nav-dropdown-list {
+      @apply z-10 min-w-52 rounded-sm border bg-white p-1 max-lg:static!;
+
+      .nav-dropdown-item {
+        .nav-dropdown-link {
+          @apply truncate rounded-sm px-4 py-1.5 transition hover:bg-slate-50 md:py-2 lg:px-5;
+        }
+      }
+    }
+  }
+
+  &.expanded {
+    @apply translate-x-0 translate-y-0 max-lg:visible;
+  }
+}
+
+.navbar .badge {
+  @apply relative inline-block;
+
+  &:not(.badge-dot) {
+    @apply relative ml-2 inline-block rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  &.badge-dot {
+    @apply absolute top-1 -right-3 h-1 w-1 rounded-full;
+  }
+
+  &.badge-accent {
+    @apply bg-blue-600 text-white;
+
+    &.badge-dot {
+      @apply bg-blue-600;
+    }
+  }
+
+  &.badge-info {
+    @apply text-text-default bg-gray-200;
+  }
+
+  &.badge-success {
+    @apply bg-green-700 text-green-100;
+
+    &.badge-dot {
+      @apply bg-green-400;
+    }
+  }
+
+  &.badge-danger {
+    @apply bg-red-600 text-red-100;
+
+    &.badge-dot {
+      @apply bg-red-600;
+    }
+  }
+
+  &.badge-dark {
+    @apply bg-theme-dark text-light;
+
+    &.badge-dot {
+      @apply bg-theme-dark;
+    }
+  }
+}

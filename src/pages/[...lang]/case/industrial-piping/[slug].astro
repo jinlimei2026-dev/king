@@ -1,0 +1,215 @@
+---
+import Base from "@/layouts/Base.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getCollection, render } from "astro:content";
+import config from ".astro/config.generated.json";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+export async function getStaticPaths() {
+  const allCases = await getCollection("cases");
+
+  return supportedLanguages.flatMap((lang: any) => {
+    const { defaultLanguage, showDefaultLangInUrl } =
+      config.settings.multilingual;
+    const langCode = lang.languageCode;
+
+    const industrialCases = allCases.filter(
+      (entry) =>
+        entry.id.startsWith(`${langCode}/`) &&
+        entry.data.category === "industrial-piping",
+    );
+
+    return industrialCases.map((entry) => {
+      const slug = entry.id
+        .split("/")
+        .pop()
+        ?.replace(/\.mdx?$/, "");
+
+      return {
+        params: {
+          lang:
+            langCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : langCode,
+          slug: slug,
+        },
+        props: { entry },
+      };
+    });
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const formattedDate = entry.data?.date
+  ? new Date(entry.data.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : "Recent";
+---
+
+<Base
+  title={entry.data.title}
+  description={entry.data.description || "Project Case Study"}>
+  <section class="border-b border-gray-200 bg-[#f8f9fa] py-12 md:py-20">
+    <div class="mx-auto max-w-300 px-6">
+      <div class="text-left">
+        {
+          entry.data.category && (
+            <span class="mb-5 inline-block rounded-full bg-[#eff6ff] px-4 py-1.5 text-sm font-bold tracking-widest text-[#2563eb] uppercase">
+              {entry.data.category.replace(/-/g, " ")}
+            </span>
+          )
+        }
+        <h1
+          class="mb-6 text-3xl leading-[1.2] font-bold tracking-tight text-[#0f172a] md:text-5xl">
+          {entry.data.title}
+        </h1>
+        <div
+          class="flex items-center gap-5 border-t border-gray-200 pt-5 text-sm font-bold text-gray-400">
+          <span class="flex items-center gap-2">
+            <i class="fa-regular fa-calendar text-lg text-[#2563eb]"></i>
+            {formattedDate}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white py-12 md:py-20">
+    <div class="mx-auto max-w-300 px-6">
+      <div class="flex flex-col gap-10 lg:flex-row xl:gap-14">
+        <main class="min-w-0 flex-1">
+          {
+            entry.data.coverImage && (
+              <div class="mb-10 w-full overflow-hidden rounded-3xl shadow-xl">
+                <OptimizedImage
+                  src={entry.data.coverImage}
+                  alt={entry.data.title}
+                  class="h-auto w-full object-cover"
+                  width={1000}
+                  height={500}
+                />
+              </div>
+            )
+          }
+
+          <div
+            class="prose prose-lg prose-headings:text-[#0f172a] prose-a:text-[#2563eb] max-w-none">
+            <Content />
+          </div>
+        </main>
+
+        <aside class="w-full shrink-0 lg:w-85">
+          <div class="sticky top-24 space-y-8">
+            <div class="rounded-2xl bg-[#0f172a] p-7 text-white shadow-xl">
+              <h3 class="mb-2 text-xl font-bold text-white">
+                Request Project Quote
+              </h3>
+              <p class="mb-6 text-sm text-gray-400">
+                Get professional insulation solutions for your project.
+              </p>
+
+              <form
+                id="quote-form"
+                action="https://formsubmit.co/ajax/jinlimei@kingsendainsulation.com"
+                method="POST"
+                class="space-y-4">
+                <input type="hidden" name="_captcha" value="false" />
+
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Your Name"
+                  class="w-full rounded-lg border border-gray-700 bg-gray-800 p-3 text-sm text-white outline-none focus:border-[#2563eb]"
+                  required
+                />
+
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  class="w-full rounded-lg border border-gray-700 bg-gray-800 p-3 text-sm text-white outline-none focus:border-[#2563eb]"
+                  required
+                />
+
+                <textarea
+                  name="requirement"
+                  placeholder="Your Requirements / Project Details"
+                  rows="4"
+                  class="w-full resize-none rounded-lg border border-gray-700 bg-gray-800 p-3 text-sm text-white outline-none focus:border-[#2563eb]"
+                  required>
+                </textarea>
+
+                <button
+                  id="submit-btn"
+                  type="submit"
+                  class="w-full rounded-lg bg-[#2563eb] py-3 text-sm font-bold transition-colors hover:bg-[#1d4ed8]">
+                  Send Inquiry
+                </button>
+              </form>
+
+              <div
+                id="success-message"
+                class="mt-4 hidden rounded-lg border border-green-500/50 bg-green-500/10 p-3 text-center text-sm text-green-400">
+                <i class="fa-solid fa-circle-check mr-2"></i>Message sent
+                successfully!
+              </div>
+
+              <div class="mt-6 border-t border-gray-700 pt-6">
+                <a
+                  href="/about/"
+                  class="block w-full rounded-lg border border-gray-600 bg-transparent py-3 text-center text-sm font-bold text-white transition-colors hover:border-gray-400 hover:bg-gray-800">
+                  Know More About Us
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("quote-form") as HTMLFormElement;
+      const submitBtn = document.getElementById(
+        "submit-btn",
+      ) as HTMLButtonElement;
+      const successMessage = document.getElementById("success-message");
+
+      if (form) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const originalBtnText = submitBtn.innerText;
+          submitBtn.innerText = "Sending...";
+          submitBtn.disabled = true;
+          const formData = new FormData(form);
+          fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                form.reset();
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+                successMessage?.classList.remove("hidden");
+                setTimeout(() => {
+                  successMessage?.classList.add("hidden");
+                }, 5000);
+              }
+            })
+            .catch((error) => {
+              alert("Something went wrong, please try again.");
+              submitBtn.innerText = originalBtnText;
+              submitBtn.disabled = false;
+            });
+        });
+      }
+    </script>
+  </section>
+</Base>

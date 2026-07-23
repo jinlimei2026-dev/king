@@ -1,0 +1,213 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+const sectionData = await getEntryCTM(
+  "sections",
+  "glass-wool-felt-features",
+  Astro.currentLocale,
+);
+if (!sectionData || !sectionData.data.enable) return null;
+const { title, subtitle, description, featuresList, button } = sectionData.data;
+---
+
+<section
+  class="flex h-screen min-h-187.5 w-full items-center justify-center overflow-hidden bg-white lg:min-h-212.5">
+  <div
+    class="feature-split-slider relative flex h-full w-full max-w-350 items-stretch border-r border-l border-black/60 px-6 py-12 md:px-12 lg:px-20 lg:py-20">
+    <button
+      class="btn-prev absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 cursor-pointer border border-black/10 bg-white px-2 py-4 text-black shadow-sm transition-all hover:bg-gray-100"
+      aria-label="Previous">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        stroke-linejoin="miter">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+    </button>
+    <button
+      class="btn-next absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 cursor-pointer border border-black/10 bg-white px-2 py-4 text-black shadow-sm transition-all hover:bg-gray-100"
+      aria-label="Next">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        stroke-linejoin="miter">
+        <path d="m9 18 6-6-6-6"></path>
+      </svg>
+    </button>
+
+    <div
+      class="grid h-full w-full grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-24">
+      <div
+        class="relative h-full pt-20 pb-24 lg:col-span-6 lg:pt-24 lg:pb-20"
+        data-aos="fade-right">
+        <div class="absolute top-0 left-0 w-full pt-2 lg:pt-4">
+          <span
+            class="text-sm font-medium tracking-[0.2em] text-black uppercase md:text-[16px]">
+            {subtitle}
+          </span>
+        </div>
+        <div>
+          <h2
+            class="mb-8 text-[5rem] leading-[0.85] font-extrabold tracking-wide text-black md:text-[7rem] lg:mb-12 lg:text-[130px]">
+            {title}
+          </h2>
+          <p
+            class="text-[24px] leading-tight font-medium text-black md:text-[32px] lg:text-[38px]"
+            set:html={description}
+          />
+        </div>
+        {
+          button && button.enable && (
+            <div class="absolute bottom-0 left-0 w-full">
+              <a
+                href={button.url}
+                class="inline-flex items-center gap-4 rounded-full bg-black px-6 py-3.5 text-[13px] font-bold text-white transition-all hover:bg-black/80">
+                <span>{button.label}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="square"
+                  stroke-linejoin="miter">
+                  <>
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </>
+                </svg>
+              </a>
+            </div>
+          )
+        }
+      </div>
+      <div
+        class="relative h-full min-h-112.5 lg:col-span-6 lg:min-h-0"
+        data-aos="fade-left"
+        data-aos-delay="200">
+        <div class="content-track relative h-full w-full">
+          {
+            featuresList &&
+              featuresList.map((feature: any, index: number) => (
+                <div
+                  class={`slide-panel absolute inset-0 bg-white pb-24 transition-all duration-700 ease-in-out lg:pb-20 ${index === 0 ? "pointer-events-auto z-10 opacity-100" : "pointer-events-none z-0 opacity-0"}`}>
+                  <div class="mt-4 lg:mt-8">
+                    <div class="mx-auto mb-8 max-h-[30vh] w-40 md:w-56 lg:mb-10 lg:w-72">
+                      {feature.image && (
+                        <OptimizedImage
+                          src={feature.image}
+                          alt={feature.title}
+                          width={400}
+                          height={400}
+                          class="h-full max-h-[30vh] w-full object-contain"
+                        />
+                      )}
+                    </div>
+                    <div class="mb-6 flex items-center gap-4 overflow-hidden md:gap-6">
+                      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/80 text-[14px] text-black md:h-12 md:w-12 md:text-[15px]">
+                        {index + 1}
+                      </span>
+                      <h3 class="overflow-hidden text-base font-semibold tracking-[0.2em] text-ellipsis whitespace-nowrap text-black uppercase md:text-xl">
+                        {feature.title}
+                      </h3>
+                    </div>
+                    <div class="relative mb-6">
+                      <div class="custom-scrollbar max-h-[18vh] overflow-y-auto pr-4 lg:max-h-[22vh]">
+                        <p class="text-sm leading-relaxed text-black/80 md:text-lg">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="absolute bottom-0 left-0 w-full pb-1">
+                    <div class="mb-4 h-1 w-32 rounded-full bg-linear-to-r from-blue-300 via-orange-200 to-orange-400" />
+                    <div class="flex items-center gap-2 text-[13px] font-medium text-black md:text-[15px]">
+                      {feature.bottomLabel || feature.title}{" "}
+                      <span class="font-light text-black/30">_</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const sliders = document.querySelectorAll(".feature-split-slider");
+
+    sliders.forEach((slider) => {
+      const panels = slider.querySelectorAll(".slide-panel");
+      const btnPrev = slider.querySelector(".btn-prev");
+      const btnNext = slider.querySelector(".btn-next");
+
+      let currentIndex = 0;
+      const totalSlides = panels.length;
+
+      if (totalSlides === 0) return;
+
+      const goToSlide = (index: number) => {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+
+        panels.forEach((panel, i) => {
+          if (i === index) {
+            panel.classList.remove("opacity-0", "z-0", "pointer-events-none");
+            panel.classList.add("opacity-100", "z-10", "pointer-events-auto");
+          } else {
+            panel.classList.add("opacity-0", "z-0", "pointer-events-none");
+            panel.classList.remove(
+              "opacity-100",
+              "z-10",
+              "pointer-events-auto",
+            );
+          }
+        });
+
+        currentIndex = index;
+      };
+
+      if (btnPrev) {
+        btnPrev.addEventListener("click", () => goToSlide(currentIndex - 1));
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener("click", () => goToSlide(currentIndex + 1));
+      }
+    });
+  });
+</script>

@@ -1,0 +1,52 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+import Breadcrumbs from "@/layouts/components/widgets/Breadcrumbs.astro";
+import AnimatedText from "./AnimatedText.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+interface Props {
+  title?: string;
+  breadcrumbTitle?: string;
+  hiddenPaths?: string[];
+}
+
+const { title, breadcrumbTitle, hiddenPaths } = Astro.props;
+---
+
+<section class="pt-0">
+  <div
+    class:list={[
+      "relative flex min-h-40 items-center overflow-hidden py-15 md:min-h-60 md:py-10 lg:min-h-80 xl:min-h-112.5",
+    ]}>
+    <OptimizedImage
+      src={"/images/page-header-bg.png"}
+      alt={title}
+      width={1920}
+      height={450}
+      class="absolute inset-0 size-full object-cover object-top"
+    />
+    <div class="absolute inset-0 bg-black/65"></div>
+
+    <div class="relative container flex flex-col gap-1 text-center md:gap-4">
+      {
+        title && (
+          <AnimatedText
+            tag="h1"
+            duration={0.6}
+            stagger={0.07}
+            class="text-h3-sm text-text-inverse md:text-h2 font-bold"
+            content={markdownify(title)}
+          />
+        )
+      }
+
+      <Breadcrumbs
+        data-aos="fade-up-sm"
+        data-aos-delay="200"
+        hiddenPaths={hiddenPaths}
+        title={breadcrumbTitle}
+        pathname={Astro.url.pathname}
+      />
+    </div>
+  </div>
+</section>
