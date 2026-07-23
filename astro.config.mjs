@@ -21,9 +21,8 @@ let {
 } = config;
 
 export default defineConfig({
-  site: config.site.baseUrl
-    ? config.site.baseUrl
-    : "http://kingsendainsulation.com",
+  site: "https://zhangtai13313239155-tech.github.io",
+  base: "/king-sit/",
   trailingSlash: config.site.trailingSlash ? "always" : "never",
   devToolbar: {
     enabled: false,
