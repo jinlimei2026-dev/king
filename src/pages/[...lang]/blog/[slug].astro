@@ -1,8 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
-import glassWoolMenu from "@/assets/images/glass-wool-menu1.png";
-import rubberPlasticMenu from "@/assets/images/rubber-plastic-menu1.png";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -217,7 +215,7 @@ const formattedDate = post.data?.date
                   <div
                     class="mb-3 h-40 w-full overflow-hidden rounded-xl bg-gray-200">
                     <OptimizedImage
-                      src={glassWoolMenu}
+                      src="glass-wool-menu1.png"
                       alt="Glass Wool"
                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       width={650}
@@ -234,7 +232,7 @@ const formattedDate = post.data?.date
                   <div
                     class="mb-3 h-40 w-full overflow-hidden rounded-xl bg-gray-200">
                     <OptimizedImage
-                      src={rubberPlasticMenu}
+                      src="rubber-plastic-menu1.png"
                       alt="Rubber Pipe"
                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       width={650}
