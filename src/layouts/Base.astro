@@ -6,6 +6,7 @@ import Footer from "@/components/global/Footer.astro";
 import Header from "@/components/global/header/Header.astro";
 import type { JSONLDProps } from "@/lib/utils/JsonLdGenerator";
 import GlobalScripts from "./components/widgets/GlobalScripts.astro";
+import WhatsAppContact from "./components/widgets/WhatsAppContact.astro";
 import config from ".astro/config.generated.json";
 
 type Props = JSONLDProps & {
@@ -51,6 +52,7 @@ let { structuredData } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <WhatsAppContact />
 
     <GlobalScripts />
   </body>
