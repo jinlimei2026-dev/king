@@ -35,6 +35,17 @@ let { structuredData } = Astro.props;
     "en"}>
   <Head {...Astro.props} structuredData={structuredData} />
   <body>
+    <!-- Meta Pixel Code (noscript fallback) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        alt=""
+        src="https://www.facebook.com/tr?id=1330164409226637&ev=PageView&noscript=1"
+      />
+    </noscript>
+    <!-- End Meta Pixel Code (noscript fallback) -->
     <Header />
     <main class:list={["has-section-gap", Astro.props.class]}>
       <slot />
