@@ -37,7 +37,7 @@
 [contact]
   location = "Operations: Zhihui Creative Mansion, Bao'an, Shenzhen | Manufacturing Base: Hebei, China"
   phone    = "+86 15909713999"
-  email    = "jinlimei@kingsendainsulation.com"
+  email    = "postmaster@kingsendainsulation.com"
 
 [settings]
   blogFolder        = "blog"
@@ -47,7 +47,7 @@
   pagination   = 6
   stickyHeader = true
 
-  contactFormAction   = "https://formsubmit.co/jinlimei@kingsendainsulation.com"
+  contactFormAction   = "https://formsubmit.co/postmaster@kingsendainsulation.com"
   contactFormProvider = "formsubmit.co"
 
   footerDescription = "Delivering superior thermal and acoustic insulation solutions globally. We empower independent retailers and large distributors with premium products and flexible inventory policies."
@@ -59,7 +59,7 @@
   [settings.subscription]
     enable     = true
     title      = "Get Our Latest Catalog"
-    formAction = "https://formsubmit.co/jinlimei@kingsendainsulation.com"
+    formAction = "https://formsubmit.co/postmaster@kingsendainsulation.com"
 
   [settings.multilingual]
     disableLanguages     = ["fr"]

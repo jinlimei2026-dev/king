@@ -213,7 +213,7 @@ export const formspreeSubmit = async (
   } catch (error) {
     setMessage(
       error +
-        "! Please use this mail - [jinlimei@kingsendainsulation.com](mailto:jinlimei@kingsendainsulation.com) to submit a ticket!",
+        "! Please use this mail - [postmaster@kingsendainsulation.com](mailto:postmaster@kingsendainsulation.com) to submit a ticket!",
       false,
       false,
       form,
