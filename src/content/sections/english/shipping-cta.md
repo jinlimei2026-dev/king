@@ -9,5 +9,5 @@ primaryButton:
 
 secondaryButton:
   label: "Email Sales"
-  url: "mailto:postmaster@kingsendainsulation.com"
+  url: "mailto:jinlimei@kingsendainsulation.com"
 ---
